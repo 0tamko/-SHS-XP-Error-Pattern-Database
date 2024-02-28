@@ -1,0 +1,130 @@
+<div  class="container">
+  <section class="panel-container mat-elevation-z8" >
+    <img class="shslogo" src="./assets/shslogo.jpg" />
+    <mat-form-field class="filterForm">
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="" value=""  [disabled]="!isLoggedIn"/>
+    </mat-form-field>
+    <button mat-stroked-button (click)="addData()" [disabled]="!isLoggedIn">Add Pattern </button>
+    <button mat-stroked-button (click)="downloadAll()" [disabled]="!isLoggedIn">Download All</button>
+    <button *ngIf="selection.selected.length>0" mat-stroked-button download="file.json" (click)="downloadSelected()" [disabled]="!isLoggedIn">Download Select</button>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)" [disabled]="!isLoggedIn"></mat-paginator>
+    <button *ngIf="isLoggedIn" mat-stroked-button (click)="logout()">Logout</button>
+
+  </section>
+  <section class="table-container mat-elevation-z8">
+    <div *ngIf="!isLoggedIn" class="logginSection">
+      <h1>You are not logged in.</h1>
+      <button mat-stroked-button color="warn" (click)="login()">Login</button>
+    </div>
+    <table *ngIf="isLoggedIn" mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="select" [sticky]="true">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)"
+                        [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id" [sticky]="true">
+        <th mat-header-cell *matHeaderCellDef>Id</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.id | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="patternName">
+        <th mat-header-cell *matHeaderCellDef>Pattern Name</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.patternName | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="logMessage">
+        <th mat-header-cell *matHeaderCellDef>Log Message</th>
+        <td mat-cell *matCellDef="let element">
+          <p *ngFor="let message of element.logMessage" [innerHTML]="message | highlightSearch: filterText"><br /></p>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dataSource">
+        <th mat-header-cell *matHeaderCellDef>Data Source</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.dataSource | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="imPmNumber">
+        <th mat-header-cell *matHeaderCellDef>Im. Pm. Number</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.imPmNumber | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="defect">
+        <th mat-header-cell *matHeaderCellDef>Defect</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.defect | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="errorDescription">
+        <th mat-header-cell *matHeaderCellDef>Error Description</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.errorDescription | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="offlineLogReaderPattern">
+        <th mat-header-cell *matHeaderCellDef>Offline Log Reader Pattern</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.offlineLogReaderPattern | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="notes">
+        <th mat-header-cell *matHeaderCellDef>Notes</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.notes | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="resultsInError">
+        <th mat-header-cell *matHeaderCellDef>Results in error</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.resultsInError | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="workaround">
+        <th mat-header-cell *matHeaderCellDef>Workaround</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.workaround | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="components">
+        <th mat-header-cell *matHeaderCellDef>Components</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.components | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="foundIn">
+        <th mat-header-cell *matHeaderCellDef>Found in</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.foundIn | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="solvedIn">
+        <th mat-header-cell *matHeaderCellDef>Solved in</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.solvedIn | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="skb">
+        <th mat-header-cell *matHeaderCellDef>SKB</th>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.skb | highlightSearch: filterText"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="functions" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <a [routerLink]="['/edit', element.id]">Edit</a><br>
+          <a class="deleteButton" [routerLink]="[]" (click)="openDialog(element.id)">Remove</a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </section>
+</div>
+

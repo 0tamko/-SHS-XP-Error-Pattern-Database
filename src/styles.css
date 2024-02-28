@@ -1,0 +1,37 @@
+
+html{
+    padding: 0;
+    margin: 0;
+}
+
+html,body{
+  height: calc(100vh - 1rem);
+  width: auto;
+
+}
+
+
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background, .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: #ee6605;;
+}
+/* Firefox */
+*{
+    scrollbar-width: thin; 
+    scrollbar-color: #aaaaaa #e0e0e0;
+  }
+
+  /* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: #e0e0e0;
+  }
+
+*::-webkit-scrollbar-track {
+    background: #e0e0e0;
+  }
+
+*::-webkit-scrollbar-thumb {
+    background-color: #aaaaaa;
+    border-radius: 0;
+  }

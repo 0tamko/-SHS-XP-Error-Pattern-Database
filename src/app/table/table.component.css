@@ -1,0 +1,183 @@
+.container {
+  height: 100%;
+}
+
+.shslogo {
+  width: 180px;
+  margin-left: 10px;
+}
+
+.filterForm {
+  margin: 0 150px 0 20px;
+}
+
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  max-height: 60px;
+  padding-top: 30px;
+}
+
+th.mat-header-cell {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+  max-height: 80px;
+  min-height: 70px;
+  border-bottom: 2px solid black;
+  margin: auto;
+}
+
+.mat-paginator {
+  margin-left: auto;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.mat-cell {
+  padding: 5px;
+}
+
+.mat-column-select {
+  min-width: 25px;
+  text-align: center;
+}
+
+.mat-column-id {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-patternName {
+  min-width: 150px;
+  text-align: center;
+}
+
+.mat-column-logMessage {
+  min-width: 500px;
+}
+
+.mat-column-dataSource {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-imPmNumber {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-defect {
+  min-width: 200px;
+}
+
+.mat-column-errorDescription {
+  min-width: 500px;
+}
+
+.mat-column-offlineLogReaderPattern {
+  min-width: 100px;
+}
+
+.mat-column-notes {
+  min-width: 200px;
+}
+
+.mat-column-resultsInError {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-workaround {
+  min-width: 300px;
+  text-align: center;
+}
+
+.mat-column-components {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-foundIn {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-solvedIn {
+  min-width: 100px;
+  text-align: center;
+}
+
+.mat-column-sKB {
+  min-width: 150px;
+  text-align: center;
+}
+
+.mat-column-functions {
+  min-width: 50px;
+  text-align: center;
+}
+
+td {
+  height: 50px;
+}
+
+::ng-deep .mat-row:nth-child(even) {
+  background-color: #EBEBEB;
+}
+
+.mat-stroked-button {
+  margin: 5px;
+  border-radius: 20px;
+}
+
+.panel-container {
+  height: 100px;
+  max-height: 10%;
+  max-width: 100%;
+  margin: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.table-container {
+  max-height: 90%;
+  min-height: 90%;
+  max-width: 100%;
+  overflow: auto;
+  margin: 8px;
+}
+
+.mat-column-functions {
+  border-left: 1px solid black;
+}
+
+.mat-column-id {
+  border-right: 1px solid black;
+}
+
+::ng-deep .highlightSearch {
+  background-color: yellow;
+}
+
+.deleteButton {
+  color: red;
+}
+
+a {
+  text-decoration: none;
+}
+
+.logginSection {
+  display:block;
+  width: 300px;
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:50px;
+}

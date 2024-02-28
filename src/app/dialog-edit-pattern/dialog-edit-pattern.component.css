@@ -1,0 +1,53 @@
+.mat-dialog-content{
+    padding: 1rem;
+    width: auto;
+    overflow: none;
+}
+.condtions-wrapper{
+    margin: 0.25rem;
+    padding: 0.5rem;
+    background-color: #f6f6f6;
+    border-radius: 0.5rem;
+    max-height: 20rem;
+    overflow: auto;
+    scroll-snap-type: proximity;
+}
+
+.editWindow{
+    padding: 1rem;
+    width: auto;
+    height: 100%;
+    margin: auto;
+}
+.editWindowItem{
+    padding: 0.25rem;
+    display: flex;
+    gap: 0.50rem;
+    align-items: center;
+}
+
+.mat-dialog-actions{
+    float: right;
+}
+
+.primary-button{
+    color: white;
+    background-color: #eb6200;
+}
+.primary-color{
+    color: #eb6200;
+}
+
+.edit-window-header{
+    font-size: 1.5rem;
+    color: #00969a;
+    font-weight: 600;
+}
+
+
+.event-functions{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem;
+}

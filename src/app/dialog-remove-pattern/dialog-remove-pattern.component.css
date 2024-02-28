@@ -1,0 +1,10 @@
+.button-wrapper{
+    display: flex;
+    flex-direction: row-reverse;
+}
+button{
+    margin: 0 0.5rem;
+    background-color: #cf4b00;
+    color: white;
+    border-radius: 1.5em;
+}

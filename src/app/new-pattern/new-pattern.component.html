@@ -1,0 +1,203 @@
+<div class="container">
+  <div class="topPanel">
+    <!-- Top Panel -->
+
+    <img class="shslogo" src="./assets/shslogo.jpg" routerLink="/table">
+    <h1 *ngIf="editingExistedPattern" class="id">Id: {{pattern.id}}</h1>
+    <h1 *ngIf="!editingExistedPattern" class="id"> </h1>
+    
+    <form class="form">
+      <mat-form-field class="patternName">
+        <mat-label>Pattern Name</mat-label>
+        <textarea required class="patternNameTextArea" matInput [(ngModel)]="pattern.patternName" name="patternName" spellcheck="false" (change)="checkDirty()"></textarea>
+        <mat-hint *ngIf="hasError" class="mat-error">
+          Pattern name is <strong>required</strong>
+        </mat-hint>
+      </mat-form-field>
+    </form>
+    <div class="buttons">
+      <input type="file"  #fileInput style="display: none;" accept=".json">
+      <button inputmode="file" mat-stroked-button (click)="importJson(fileInput)" >Import</button>
+      <button mat-stroked-button (click)="exportJson()">Export</button>
+      <button style="width:100px" (click)="addTestData()">Fill test data</button>
+      <button mat-stroked-button (click)="onClose()">Close</button>
+      <button mat-stroked-button (click)="onSave()">Save</button>
+
+    </div>
+  </div>
+  <div class="leftPanel">
+    <!-- Left Panel -->
+    <form class="form">
+      <div #messageList class="messagesList">
+      <table>
+        <tr class="clickable-row" (click)="divClicked($event.target)"  *ngFor="let item of pattern.logMessage let i = index" tabindex="{{i}}" id="{{item.id}}">
+          <ng-container *ngIf="item.type == typeMessage; else elseBlock">
+            <td colspan="2">
+            <p class="event-postion bold-primary-color-text">Event {{i+1}}</p>
+              <div class="event-wrapper">
+                <div class="condtions-wrapper">
+                  <div class="not-operation" *ngIf="item.notState">
+                    <p class="not-operation-context">NOT</p>
+                  </div>
+                  <div class="condition" *ngFor="let item of item.conditions">
+                    <p>{{item.source}}</p>
+                    <p class="bold-primary-color-text">{{patternMap(item.pattern)}}</p>
+                    <p>{{item.pattern.split("*").join("")}}</p>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="menu-wrapper">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button></div>
+                <mat-menu #menu="matMenu" xPosition="before">
+                  <button mat-menu-item (click)="editDialogPattern(item)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Edit</span>
+                  </button>
+                </mat-menu>
+            </td>
+          </ng-container>
+          
+          <ng-template #elseBlock>
+            <td class="operator-style">
+              <p class="operator">
+                {{item.operator?.name}}
+              </p>
+              <input *ngIf="item.operator?.name == 'WITHIN'" type="text" maxlength="4" name="within" [(ngModel)]="item.operator!.value"> 
+              <span *ngIf="item.operator?.name == 'WITHIN'" class="operator">Second's</span>
+            </td>
+            <td class="relationship">
+              <div *ngFor="let member of item.members" class="members-messages">
+
+                <div class="not-operation" *ngIf="member.notState">
+                  <p class="not-operation-context">NOT</p>
+                </div>
+                <div class="condition" *ngFor="let item of member.conditions">
+                  <p>{{item.source}}</p>
+                    <p class="bold-primary-color-text">{{patternMap(item.pattern)}}</p>
+                    <p>{{item.pattern.replace("*","")}}</p>
+                </div>
+
+                <div class="members-messages-functions">
+                  <button mat-icon-button (click)="editDialogPattern(member)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <button mat-icon-button (click)="splitRelationShip(item.id)">
+                <mat-icon>content_cut</mat-icon>
+              </button>
+            </td>
+          </ng-template>
+
+      </table>
+
+      </div>
+
+      <div class="messageListControl">
+        <!--<textarea matInput spellcheck="false" placeholder="Insert message" class="messageTextArea" [(ngModel)]="messageTextAreaValue" [ngModelOptions]="{standalone: true}"></textarea>-->
+        <button mat-stroked-button (click)="addMessage()">Add</button>
+        <button [disabled]="currentlySelectedMessages.length == 0" mat-stroked-button (click)="removeMessage()">Remove</button>
+        <button [disabled]="isChangePositionPossible(-1)" mat-stroked-button (click)="changePosition(-1)">Up</button>
+        <button [disabled]="isChangePositionPossible(+1)" mat-stroked-button (click)="changePosition(+1)">Down</button>
+      </div>
+      <div class="logicalOpperatorsControl">
+        
+        <button [disabled]="currentlySelectedMessages.length != 2" class="operatorAnd" mat-stroked-button (click)="addLogicalOperator('AND')">AND</button>
+        <button [disabled]="currentlySelectedMessages.length != 2" class="operatorAnd" mat-stroked-button (click)="addLogicalOperator('OR')">OR</button>
+        <button [disabled]="currentlySelectedMessages.length != 2 " class="operatorOr" mat-stroked-button (click)="addLogicalOperator('WITHIN')">Within</button>
+        <button [disabled]="currentlySelectedMessages.length != 1 " class="operatorOr" mat-stroked-button (click)="negateEvent()">NOT</button>
+      </div>
+
+    </form>
+  </div>
+  <div class="centerPanel">
+    <!-- Center panel -->
+    <form class="form">
+      <mat-form-field class="formTextArea">
+        <mat-label>
+          Offline Log Reader Pattern
+        </mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.offlineLogReaderPattern" name="offlineLogReader" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>Data Source</mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.dataSource" name="dataSource" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>Im. Pm. Number</mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.imPmNumber" name="imPmNumber" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>Defect</mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.defect" name="defect" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+
+      <mat-form-field class="formTextArea">
+        <mat-label>
+          Results In error
+        </mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.resultsInError" name="resultsInError" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>Workaround</mat-label>
+        <textarea class="workaroundTextArea" matInput spellcheck="false" [(ngModel)]="pattern.workaround" name="workaround" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>
+          Components
+        </mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.components" name="components" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+    </form>
+  </div>
+  <div class="rightPanel">
+    <!-- Right panel -->
+    <form class="form">
+      <mat-form-field class="formTextArea">
+        <mat-label>
+          Found In
+        </mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.foundIn" name="foundIn" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>
+          Solved In
+        </mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.solvedIn" name="solvedIn" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>
+          SKB
+        </mat-label>
+        <textarea matInput spellcheck="false" [(ngModel)]="pattern.sKB" name="sKB" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>Error description</mat-label>
+        <textarea matInput class="errorDescriptionTextArea" spellcheck="false" [(ngModel)]="pattern.errorDescription" name="errorDescription" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="formTextArea">
+        <mat-label>Notes</mat-label>
+        <textarea class="notesTextArea" matInput spellcheck="false" [(ngModel)]="pattern.notes" name="notes" (change)="checkDirty()"></textarea>
+      </mat-form-field>
+
+    </form>
+  </div>
+</div>

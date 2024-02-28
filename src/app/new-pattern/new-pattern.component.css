@@ -1,0 +1,268 @@
+
+/*Table for message list sytles*/
+table{
+  width: 100%;
+}
+
+
+tr:nth-child(even) {
+}
+
+td{
+  text-align: left;
+}
+td:first-child{
+  padding: 0.5rem 0;
+}
+.menu-wrapper{
+  text-align: right !important;
+  padding: 0;
+  margin: 0;
+}
+.functions{
+  float: right;
+}
+.event-postion{
+  margin: 0 1rem;
+}
+.clickable-row{
+  user-select: none; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid ;
+}
+.clickable-row:last-child{
+  border-bottom: none;
+}
+.clickable-row:hover{
+  background: #f6f6f6;
+}
+.selected {
+  background: #e4e3e3;
+}
+.members{
+  display: flex;
+  gap: 1rem;
+}
+.relationship{
+  border-left: 1px solid;
+  width: 100%;
+}
+.members-messages{
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  border-bottom: 1px solid ;
+}
+.members-messages:last-child{
+  border-bottom: none ;
+}
+.members-messages-functions{
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.operator-style{
+  max-width: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  text-align: center;
+  padding: 1rem;
+  margin: 1rem;
+}
+.operator-style > input[type = "text"]{
+  margin: 0.5rem;
+  min-width: 2rem;
+  max-width: 3rem;
+  border: none;
+  border-bottom: 1px solid black;
+  background: transparent;
+  color: #00969a;
+  font-weight: 600;
+}
+
+.operator{
+  margin: 0;
+  font-weight: 600;
+  color: #eb6200;
+}
+.not-operation{
+  display: flex;
+  margin: 0;
+  border: 1px solid black;
+  background-color: rgb(205, 30, 30);
+  padding: 0.5rem;
+}
+.not-operation-context{
+  color: white;
+  font-weight: 600;
+  margin: auto;
+  text-align: center;
+  transform: rotate(-90deg);
+}
+.messagesList {
+  height: 35em;
+  width: 100%;
+  overflow: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  border: 1px solid gray;
+}
+.condtions-wrapper{
+  display: flex;
+}
+.condition{
+  padding: 1rem;
+  border: 1px solid black;
+}
+.event-wrapper{
+  padding: 1rem;
+}
+.message-wrapper{
+  border: 1px solid black;
+  padding: 1rem;
+}
+
+.bold-primary-color-text{
+  color: #00969a; /*#eb6200 <-primary #00969a <- secondary */
+  font-weight: 600;
+}
+
+/*Main page*/
+
+
+.container {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
+  grid-template-rows: 6.25em auto;
+  grid-template-areas:
+    "topPanel topPanel topPanel"
+    "leftPanel centerPanel rightPanel ";
+  grid-gap: 0.625em;
+  width: 100%;
+  height: 100%;
+}
+
+.topPanel {
+  grid-area: topPanel;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 10.5px rgba(0, 0, 0, 0.3);
+}
+
+.leftPanel {
+  grid-area: leftPanel;
+  box-shadow: 0px 0px 10.5px rgba(0, 0, 0, 0.3);
+}
+
+.centerPanel {
+  grid-area: centerPanel;
+  box-shadow: 0px 0px 10.5px rgba(0, 0, 0, 0.3);
+}
+
+.rightPanel {
+  grid-area: rightPanel;
+  box-shadow: 0px 0px 10.5px rgba(0, 0, 0, 0.3);
+}
+
+.leftPanelFormField {
+  background-color: white;
+  margin: 1em;
+}
+
+.form {
+  /*width: calc(100% - 1.25em);*/
+  padding: 1em;
+}
+
+.formTextArea {
+  width: 100%;
+}
+
+textarea.mat-input-element {
+  resize: none;
+}
+
+.patternName {
+  margin-top: 0.9375em;
+}
+
+.patternNameTextArea {
+  font-weight: 500;
+  font-size: 1.125em;
+}
+
+
+.messageListControl {
+  margin-bottom: 0.25rem;
+}
+
+.logicalOpperatorsControl {
+  margin-bottom: 0.5rem;
+}
+
+.messageTextArea {
+  resize: none;
+  width: calc(100% - 10px);
+  height: 6.25em;
+  padding: 5px;
+  margin-top: 5px;
+  border: 1px solid gray;
+}
+
+
+.mat-list-item-content {
+  width: 97%;
+}
+
+.logMessageTextArea {
+  height: 300px;
+}
+
+.errorDescriptionTextArea {
+  height: 150px;
+}
+
+.notesTextArea {
+  height: 150px;
+}
+
+.workaroundTextArea {
+  height: 150px;
+}
+
+
+.patternName {
+  width: 200px;
+}
+
+.id {
+  margin: 10px;
+  min-width: 200px;
+}
+
+.mat-stroked-button {
+  margin: 5px;
+  border-radius: 20px;
+  background-color: white;
+}
+
+.buttons {
+  margin-left: auto;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.shslogo {
+  width: 180px;
+  margin: 10px;
+}
+
+.mat-error {
+  color: red;
+}
