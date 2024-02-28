@@ -65,14 +65,14 @@ id: any;
   //------------------------------------------------------------------------------------------
 
   exportJson(){
-    this.jsonHandling.onExportButtonClick(this.pattern)
+    this.jsonHandling.exportPatternToJsonDownload(this.pattern)
   }
   importJson(fileInput: HTMLInputElement){
     let ParsedJson: Object;
     fileInput.click()
     fileInput.addEventListener('change', (e) => {
       fileInput.files![0].text()
-      .then(importedJson => ParsedJson = JSON.parse(importedJson))
+      .then(importedJson => ParsedJson = this.jsonHandling.importPatternFromJson(importedJson))
       .finally(() => {
         try{
           this.pattern = ParsedJson as Pattern

@@ -141,7 +141,7 @@ export class TableComponent implements OnInit {
       }
     });*/
     const selected = this.selection.selected
-    this.jsonHandling.onExportButtonClick(selected[0])
+    this.jsonHandling.exportPatternToJsonDownload(selected[0])
   }
 
   openDialog(id: number) {
