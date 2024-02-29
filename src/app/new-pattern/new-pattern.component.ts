@@ -62,8 +62,6 @@ id: any;
     this.cdref.detach();
   }
 
-  //------------------------------------------------------------------------------------------
-
   exportJson(){
     this.jsonHandling.exportPatternToJsonDownload(this.pattern)
   }
@@ -84,7 +82,6 @@ id: any;
       .catch(e => console.log(e))
     })
   }
-
 
   nextId():number{
     if(this.pattern.logMessage.length ==0)
@@ -283,15 +280,27 @@ id: any;
     }
 
     if (this.editingExistedPattern) {
-      this.patternApi.updatePattern(this.pattern.id, this.pattern).subscribe(() => {
+      this.patternApi.updatePattern(this.pattern.id, this.pattern).subscribe(
+      () => 
+      {
         this.router.navigateByUrl('/table');
 
+      },
+      error =>
+      {
+        console.log(error);
       });
     }
     else {
-      this.patternApi.addPattern(this.pattern).subscribe(() => {
+      this.patternApi.addPattern(this.pattern).subscribe(
+        () => 
+        {
         this.router.navigateByUrl('/table');
 
+      },
+      error =>
+      {
+        console.log(error);
       });
     }
   }

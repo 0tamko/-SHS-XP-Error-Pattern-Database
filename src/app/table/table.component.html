@@ -6,17 +6,11 @@
       <input matInput (keyup)="applyFilter($event)" placeholder="" value=""  [disabled]="!isLoggedIn"/>
     </mat-form-field>
     <button mat-stroked-button (click)="addData()" [disabled]="!isLoggedIn">Add Pattern </button>
-    <button mat-stroked-button (click)="downloadAll()" [disabled]="!isLoggedIn">Download All</button>
     <button *ngIf="selection.selected.length>0" mat-stroked-button download="file.json" (click)="downloadSelected()" [disabled]="!isLoggedIn">Download Select</button>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)" [disabled]="!isLoggedIn"></mat-paginator>
-    <button *ngIf="isLoggedIn" mat-stroked-button (click)="logout()">Logout</button>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)" [disabled]="!isLoggedIn"></mat-paginator> 
 
   </section>
-  <section class="table-container mat-elevation-z8">
-    <div *ngIf="!isLoggedIn" class="logginSection">
-      <h1>You are not logged in.</h1>
-      <button mat-stroked-button color="warn" (click)="login()">Login</button>
-    </div>
+  <section class="table-container mat-elevation-z8">   
     <table *ngIf="isLoggedIn" mat-table [dataSource]="dataSource">
 
       <ng-container matColumnDef="select" [sticky]="true">

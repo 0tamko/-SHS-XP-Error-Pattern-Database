@@ -7,9 +7,6 @@ export const environment = {
   hubUrl: "https://localhost:44374/updatehub",
   baseUrl: "https://localhost:44375",
   clientRoot: "http://localhost:4200/",
-  stsAuthority: "https://myid-qa.siemens.com/",
-  clientId: "2b9fd8ca-6124-4aa6-a834-e3ae0a0f05c7",
-  tokenEndpoint: "https://myid-qa.siemens.com/as/token.oauth2",
 };
 
 /*
