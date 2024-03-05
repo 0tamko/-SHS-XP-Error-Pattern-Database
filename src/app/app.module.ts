@@ -22,7 +22,6 @@ import { FormsModule } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
 import {MatMenuModule} from '@angular/material/menu'; 
 import {MatIconModule} from '@angular/material/icon'; 
-import { SigninRedirectCallbackComponent } from './security/signin-redirect-callback.component';
 import { CookieService } from 'ngx-cookie-service';
 import { DialogEditPatternComponent } from './dialog-edit-pattern/dialog-edit-pattern.component';
 import {MatTabsModule} from '@angular/material/tabs'; 
@@ -34,7 +33,6 @@ const routes: Routes = [
   { path: 'table', component: TableComponent , canActivate: [] },
   { path: 'edit/:id', component: NewPatternComponent, resolve: { pattern: PatternResolver } },
   { path: 'edit', component: NewPatternComponent },
-  { path: 'signin-callback', component: SigninRedirectCallbackComponent },
   { path: '', redirectTo: '/table', pathMatch: 'full' }
 ]
 
@@ -45,7 +43,6 @@ const routes: Routes = [
     NewPatternComponent,
     TableComponent,
     DialogRemovePatternComponent,
-    SigninRedirectCallbackComponent,
     DialogEditPatternComponent
   ],
   imports: [

@@ -62,17 +62,15 @@ id: any;
     this.cdref.detach();
   }
 
-  //------------------------------------------------------------------------------------------
-
   exportJson(){
-    this.jsonHandling.onExportButtonClick(this.pattern)
+    this.jsonHandling.exportPatternToJsonDownload(this.pattern)
   }
   importJson(fileInput: HTMLInputElement){
     let ParsedJson: Object;
     fileInput.click()
     fileInput.addEventListener('change', (e) => {
       fileInput.files![0].text()
-      .then(importedJson => ParsedJson = JSON.parse(importedJson))
+      .then(importedJson => ParsedJson = this.jsonHandling.importPatternFromJson(importedJson))
       .finally(() => {
         try{
           this.pattern = ParsedJson as Pattern
@@ -84,7 +82,6 @@ id: any;
       .catch(e => console.log(e))
     })
   }
-
 
   nextId():number{
     if(this.pattern.logMessage.length ==0)
@@ -283,15 +280,27 @@ id: any;
     }
 
     if (this.editingExistedPattern) {
-      this.patternApi.updatePattern(this.pattern.id, this.pattern).subscribe(() => {
+      this.patternApi.updatePattern(this.pattern.id, this.pattern).subscribe(
+      () => 
+      {
         this.router.navigateByUrl('/table');
 
+      },
+      error =>
+      {
+        console.log(error);
       });
     }
     else {
-      this.patternApi.addPattern(this.pattern).subscribe(() => {
+      this.patternApi.addPattern(this.pattern).subscribe(
+        () => 
+        {
         this.router.navigateByUrl('/table');
 
+      },
+      error =>
+      {
+        console.log(error);
       });
     }
   }

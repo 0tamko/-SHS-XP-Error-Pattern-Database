@@ -8,10 +8,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePatternComponent } from '../dialog-remove-pattern/dialog-remove-pattern.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
-import exportFromJSON from 'export-from-json'
-import { DownloadJson } from '../models/DownloadJson';
-import { AuthService } from '../security/auth.service';
-import { formatDate } from '@angular/common';
 import { SignalrService } from '../services/signalr.service';
 import { JsonHandling } from '../services/json-handling.service';
 
@@ -38,7 +34,6 @@ export class TableComponent implements OnInit {
     public patternsApiService: PatternsApiService,
     private router: Router,
     private dialog: MatDialog,
-    private authService: AuthService,
     private signalRService: SignalrService,
     private jsonHandling:JsonHandling) {
 
@@ -63,16 +58,7 @@ export class TableComponent implements OnInit {
     this.displayedColumns[16] = 'functions';
   }
   ngOnInit(): void {
-    this.authService.isLoggedIn().then(loggedIn => {
-      console.log("1")
-      this.isLoggedIn = loggedIn;
-    });
-
-    this.authService.loginChanged.subscribe(isLoggedIn => {
-      console.log("2")
-      this.isLoggedIn = isLoggedIn;
-    });
-
+    
     var pageSize = localStorage.getItem('pageSize');
 
     if (!pageSize) {
@@ -109,39 +95,9 @@ export class TableComponent implements OnInit {
     this.router.navigateByUrl("/edit");
   }
 
-  regainAccessToken() {
-    this.authService.regainAccessToken();
-  }
-
-  downloadAll() {
-    this.patternsApiService.getDownload().subscribe((result: DownloadJson[] | undefined) => {
-      if (!!result) {
-        const data = result;
-        const fileName = 'Patterns_' + formatDate(new Date(), 'hhmm_ddMMyyyy', 'en');
-        const exportType = 'json'
-
-        exportFromJSON({ data, fileName, exportType })
-      }
-    });
-  }
-
   downloadSelected() {
-    /*var selected: number[] = [];
-    for (var i = 0; i < this.selection.selected.length; i++) {
-      selected.push(this.selection.selected[i].id)
-    }*/
-    /*
-    this.patternsApiService.getDownloadSelected(selected).subscribe((result: DownloadJson[] | undefined) => {
-      if (!!result) {
-        const data = result;
-        const fileName = 'download'
-        const exportType = 'json'
-
-        exportFromJSON({ data, fileName, exportType })
-      }
-    });*/
     const selected = this.selection.selected
-    this.jsonHandling.onExportButtonClick(selected[0])
+    this.jsonHandling.exportPatternToJsonDownload(selected[0])
   }
 
   openDialog(id: number) {
@@ -192,14 +148,4 @@ export class TableComponent implements OnInit {
     this.getPatterns();
   }
 
-  login() {
-    this.authService.login();
-  }
-
-  logout() {
-    this.authService.logout().then( ()=>
-      window.location.reload()
-    );
-    
-  }
 }
