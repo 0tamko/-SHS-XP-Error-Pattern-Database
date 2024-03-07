@@ -30,7 +30,7 @@ export class DialogEditPatternComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Event) { }
 
   ngOnInit(): void {
-      this.eventForEdit= new Event(this.data.id,this.data.type,Conditions.clone(this.data.conditions),this.data.operator,this.data.members,this.data.notState)
+      this.eventForEdit= new Event(this.data.id,Conditions.clone(this.data.conditions),this.data.terminate)
       this.generatePosibleOptions()
   }
   removeOperationOnSelectChange(condition : string){

@@ -2,15 +2,51 @@
 /*Table for message list sytles*/
 table{
   width: 100%;
+  list-style: none;
+}
+
+.list-item{
+  list-style: none;
+  padding: 0;
+  display: flex;
+  background-color: white;
+}
+.list-item-clickable:hover{
+  background-color: gray;
+  cursor: pointer;
+}
+
+.list-item-type{
+  margin: auto 1rem;  
 }
 
 
-tr:nth-child(even) {
+.list-item-wrapper{
+  width: 100%;
+  overflow: hidden;
+}
+
+.list-item-event{
+  padding: 0 0.5rem;
+  flex-direction: column ;
+  border-bottom: solid black 1px;
+}
+.list-item-event:last-child{
+  border-bottom: none;
+}
+
+ul{
+  border: solid black 1px;
+  margin: 1px;
+}
+li{
+  width: 100%;
 }
 
 td{
   text-align: left;
 }
+
 td:first-child{
   padding: 0.5rem 0;
 }
@@ -85,11 +121,6 @@ td:first-child{
   font-weight: 600;
 }
 
-.operator{
-  margin: 0;
-  font-weight: 600;
-  color: #eb6200;
-}
 .not-operation{
   display: flex;
   margin: 0;
@@ -130,6 +161,10 @@ td:first-child{
 .bold-primary-color-text{
   color: #00969a; /*#eb6200 <-primary #00969a <- secondary */
   font-weight: 600;
+}
+.bold-secondary-color-text{
+  font-weight: 600;
+  color: #eb6200;
 }
 
 /*Main page*/

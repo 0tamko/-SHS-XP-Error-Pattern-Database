@@ -97,7 +97,7 @@ export class TableComponent implements OnInit {
 
   downloadSelected() {
     const selected = this.selection.selected
-    this.jsonHandling.exportPatternToJsonDownload(selected[0])
+    //this.jsonHandling.exportPatternToJsonDownload(selected[0])
   }
 
   openDialog(id: number) {

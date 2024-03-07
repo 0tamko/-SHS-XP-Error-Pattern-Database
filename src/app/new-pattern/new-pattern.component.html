@@ -17,11 +17,11 @@
     </form>
     <div class="buttons">
       <input type="file"  #fileInput style="display: none;" accept=".json">
-      <button inputmode="file" mat-stroked-button (click)="importJson(fileInput)" >Import</button>
-      <button mat-stroked-button (click)="exportJson()">Export</button>
+     <!-- <button inputmode="file" mat-stroked-button (click)="importJson(fileInput)" >Import</button>
+      <button mat-stroked-button (click)="exportJson()">Export</button>-->
       <button style="width:100px" (click)="addTestData()">Fill test data</button>
-      <button mat-stroked-button (click)="onClose()">Close</button>
-      <button mat-stroked-button (click)="onSave()">Save</button>
+      <!--<button mat-stroked-button (click)="onClose()">Close</button>
+      <button mat-stroked-button (click)="onSave()">Save</button>-->
 
     </div>
   </div>
@@ -30,6 +30,7 @@
     <form class="form">
       <div #messageList class="messagesList">
       <table>
+        <!--
         <tr class="clickable-row" (click)="divClicked($event.target)"  *ngFor="let item of pattern.logMessage let i = index" tabindex="{{i}}" id="{{item.id}}">
           <ng-container *ngIf="item.type == typeMessage; else elseBlock">
             <td colspan="2">
@@ -95,14 +96,44 @@
                 <mat-icon>content_cut</mat-icon>
               </button>
             </td>
-          </ng-template>
+          </ng-template> -->
+          
+          <!-- First call of recursion-->
+          <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: pattern.logMessage.algorithm}" >
+          </ng-container>
 
+          <!--This bellow is body for recursion ng-contianer-->
+          <ng-template #Recursion let-algorithmItems="pattern_algorithmItems">
+
+            <ul *ngFor="let algorithmItem of algorithmItems" (click)="elementClicked($event.target)" class="list-item list-item-clickable">
+
+              <div *ngIf=" algorithmItem.type.toLowerCase().includes('event')" class="list-item-wrapper">
+                <li *ngFor="let c of pairDefinitionWithAlgorithm(algorithmItem,pattern.logMessage.definition)?.conditions" class="list-item-event list-item list-item-clickable">
+                    <p> <span class="bold-primary-color-text">Source:</span>  {{c.source}} </p>
+                    <p> <span class="bold-secondary-color-text">Pattern:</span>  {{c.pattern}}</p>
+                </li>
+              </div>
+
+              <div *ngIf="algorithmItem.type.toLowerCase().includes('within') || algorithmItem.type.toLowerCase().includes('or') " class="list-item-type list-item-clickable">
+                <p>{{algorithmItem.type}}</p>
+              </div>   
+                        
+
+              <!--This ng-container bellow call themselves. Count of calls depends on count of members -->
+              <li *ngIf="algorithmItem.members.length > 0">
+                <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: algorithmItem.members}">
+                </ng-container>
+              </li>
+
+            </ul>
+          </ng-template>
       </table>
 
       </div>
-
-      <div class="messageListControl">
-        <!--<textarea matInput spellcheck="false" placeholder="Insert message" class="messageTextArea" [(ngModel)]="messageTextAreaValue" [ngModelOptions]="{standalone: true}"></textarea>-->
+      <div *ngFor="let item of currentlySelectedMessages">
+        {{item.innerText}}
+      </div>
+      <!--<div class="messageListControl">
         <button mat-stroked-button (click)="addMessage()">Add</button>
         <button [disabled]="currentlySelectedMessages.length == 0" mat-stroked-button (click)="removeMessage()">Remove</button>
         <button [disabled]="isChangePositionPossible(-1)" mat-stroked-button (click)="changePosition(-1)">Up</button>
@@ -115,7 +146,7 @@
         <button [disabled]="currentlySelectedMessages.length != 2 " class="operatorOr" mat-stroked-button (click)="addLogicalOperator('WITHIN')">Within</button>
         <button [disabled]="currentlySelectedMessages.length != 1 " class="operatorOr" mat-stroked-button (click)="negateEvent()">NOT</button>
       </div>
-
+    -->
     </form>
   </div>
   <div class="centerPanel">

@@ -12,15 +12,15 @@ export class JsonHandling {
 
     constructor() { }
 
-    importPatternFromJson(patternDefinitonJson: string): Pattern {
+    /*importPatternFromJson(patternDefinitonJson: string): Pattern {
         let pattern = new Object() as Pattern;
-        pattern.logMessage = [];
+        //pattern.logMessage = [];
         let parsedJson = JSON.parse(patternDefinitonJson);
         let patternDefinition = parsedJson as PatternDefinitionJson;
         
         // fill events
         patternDefinition.algorithm.forEach(element => {
-            pattern.logMessage.push(this.searchEvent(element, patternDefinition.definition));
+            //pattern.logMessage.push(this.searchEvent(element, patternDefinition.definition));
         });
 
         //fill metadata
@@ -64,14 +64,14 @@ export class JsonHandling {
 
 
         // fill 'definition' part
-        selected.logMessage.forEach(element => {
-            this.searchDefinitionItems(element, patternDefinitionJson.definition);
-        });
+        //selected.logMessage.forEach(element => {
+            //this.searchDefinitionItems(element, patternDefinitionJson.definition);
+        //});
 
         // fill 'algorithm' part
-        selected.logMessage.forEach(element => {
-            patternDefinitionJson.algorithm.push(this.searchAlgorithmItems(element, new AlgorithmItem()));
-        });
+        //selected.logMessage.forEach(element => {
+            //patternDefinitionJson.algorithm.push(this.searchAlgorithmItems(element, new AlgorithmItem()));
+        //});
 
         console.log(JSON.stringify(patternDefinitionJson));
 
@@ -88,7 +88,7 @@ export class JsonHandling {
                 0,
                 definitions.find(x => x.id == algorithm.value)?.conditions ?? null,
                 null,
-                null,
+                [],
                 algorithm.type.includes("terminate") ? true : false,
             );
             return newEvent;
@@ -158,7 +158,7 @@ export class JsonHandling {
         }
 
         return algorithmItem;
-    }
+    }*/
 }
 
 class PatternDefinitionJson {

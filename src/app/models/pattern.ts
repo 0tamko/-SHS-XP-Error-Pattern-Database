@@ -1,9 +1,10 @@
+import { AlgorithmItem, DefinitionItem } from "./PatternDefinitionJson";
 import { Event } from "./event";
 
 export interface Pattern {
   id: number;
   patternName: string;
-  logMessage: Event[];
+  logMessage: AlgorithmDefinitionItem;
   dataSource: string;
   imPmNumber: string;
   defect: string;
@@ -16,4 +17,9 @@ export interface Pattern {
   foundIn: string;
   solvedIn: string;
   sKB: string;
+}
+
+export class AlgorithmDefinitionItem{
+  algorithm: AlgorithmItem[];
+  definition: DefinitionItem[];
 }

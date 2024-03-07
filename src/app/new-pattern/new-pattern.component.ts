@@ -1,14 +1,15 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pattern } from '../models/pattern';
+import { AlgorithmDefinitionItem, Pattern } from '../models/pattern';
 import { ActivatedRoute } from '@angular/router';
 import { PatternsApiService } from '../services/patterns-api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePatternComponent } from '../dialog-remove-pattern/dialog-remove-pattern.component';
-import { Event, EventType, Relation } from '../models/event';
+import { Event } from '../models/event';
 import { DialogEditPatternComponent } from '../dialog-edit-pattern/dialog-edit-pattern.component';
 import { Conditions } from '../models/conditions';
 import { JsonHandling } from '../services/json-handling.service';
+import { AlgorithmItem, DefinitionItem } from '../models/PatternDefinitionJson';
 
 @Component({
   selector: 'app-new-pattern',
@@ -16,8 +17,6 @@ import { JsonHandling } from '../services/json-handling.service';
   styleUrls: ['./new-pattern.component.css'],
 })
 export class NewPatternComponent implements OnInit {
-  RecordType = EventType;
-  typeMessage = EventType.message;
 
   pattern: Pattern;
   editingExistedPattern: boolean = false;
@@ -61,7 +60,7 @@ id: any;
     this.cdref.detectChanges();
     this.cdref.detach();
   }
-
+/*
   exportJson(){
     this.jsonHandling.exportPatternToJsonDownload(this.pattern)
   }
@@ -81,8 +80,8 @@ id: any;
       })
       .catch(e => console.log(e))
     })
-  }
-
+  }*/
+  /*
   nextId():number{
     if(this.pattern.logMessage.length ==0)
       return 0;
@@ -178,7 +177,7 @@ id: any;
 
   addMessage():void  {
     const dialogRef = this.dialog.open(DialogEditPatternComponent,{
-      data: new Event(this.nextId(),EventType.message,[new Conditions("","")],null,null)
+      data: new Event(this.nextId(),EventType.message,[new Conditions("","")],null,[])
     });
 
     dialogRef.afterClosed().subscribe(newRecord => {
@@ -243,25 +242,7 @@ id: any;
         }
       })
   }
-
-  resetPattern(): void {
-    this.pattern = {
-      id: -1,
-      patternName: '',
-      logMessage: [],
-      dataSource: '',
-      imPmNumber: '',
-      defect: '',
-      errorDescription: '',
-      offlineLogReaderPattern: '',
-      notes: '',
-      resultsInError: '',
-      workaround: '',
-      components: '',
-      foundIn: '',
-      solvedIn: '',
-      sKB: ''
-    };
+  
   }
 
   onClose(): void {
@@ -345,23 +326,108 @@ id: any;
     }
     return "Equals"
   }
+*/
+
+elementClicked($event :any)
+{
+  let htmlElement = $event as HTMLElement
+
+  if (htmlElement.className.includes("list-item-clickable"))
+  {
+    if(this.currentlySelectedMessages.includes(htmlElement))
+      return;
+    console.log(htmlElement)
+    this.currentlySelectedMessages.push(htmlElement)
+  }
+
+
+}
+
+pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem[]
+){
+  if (algorithm.type.includes("event") || algorithm.type.includes("Event")) {
+    let eventToReturn = new Event(
+      Number.parseInt(algorithm.value),
+      definition.find(x => x.id == algorithm.value)?.conditions ?? null,
+      algorithm.type.includes("terminate") ? true : false,
+    )
+  return eventToReturn
+  }
+  return;
+}
+
 
   addTestData(): void {
 
-    let cond1: Conditions[] = [new Conditions("Message","UIS_02005_EXP_RELEASE_SVC"),new Conditions("VK","1"),new Conditions("HK","1")]
-    let cond2: Conditions[] = [new Conditions("Message","Water Value recieved"),new Conditions("Dap","0")]
+    let def : DefinitionItem[] =  [
+      {
+      id : "waterValue",
+      conditions :
+      [
+          { "source" : "EMH.Message", "pattern" : "Water Value Received"}
+      ]
+  },
+  {
+      id : "expRelease",
+      conditions :
+      [
+          { source : "EMH.ID", "pattern" : "UIS_02005_EXP_RELEASE_SVC*"},
+          { source : "EMH.Message", "pattern" : "*VK = 1, HK = 1*"} 
+      ]
+  },        
+  {
+      id : "imageStoreFailed",
+      conditions :
+      [
+          { "source" : "EMH.*", "pattern" : "*image not stored"}                
+      ]
+  }
+]
 
-    let cond3: Conditions[] = [new Conditions("Message","UIS_02005_EXP_RELEASE_SVC"),new Conditions("VK","1"),new Conditions("HK","1")]
-    let cond4: Conditions[] = [new Conditions("Message","Water Value recieved"),new Conditions("Dap","0")]
+    let algorithmItem : AlgorithmItem[] = [
+      {
+      type : "within",
+      value : "10000",
+      members : 
+      [
+          {
+              type : "or",
+              value : "",
+              members : 
+              [
+                  {
+                      type : "event",
+                      value : "waterValue",
+                      members : []
+                  },
+                  {
+                      type : "event",
+                      value : "expRelease",
+                      members : []
+                  },
+                  {
+                    type : "event",
+                    value : "expRelease",
+                    members : []
+                }
+              ]
+          },               
+          {
+              type : "terminateEvent",
+              value : "imageStoreFailed",
+              members : []
+          } 
+      ]
+  }]
+
 
     this.pattern = {
       id: -1,
       patternName: 'NetworkDeviceConfigurationException',
-      logMessage: [
-        new Event(1,EventType.message,cond1,null,null),
-        new Event(2,EventType.message,cond2,null,null),
-        new Event(3,EventType.relationShip,null,new Relation("WITHIN",30),[new Event(4,EventType.message,cond3,null,null),new Event(5,EventType.message,cond4,null,null,true)])
-      ],
+      logMessage: {
+        algorithm: algorithmItem,
+        definition : def
+      },
       dataSource: "syngo.txt",
       imPmNumber: 'PM00255093',
       defect: 'Defect 219032_ Rejected images are automatically selected in distribution workflow step',
@@ -376,10 +442,30 @@ id: any;
       sKB: 'SKB0118078'
     };
 
+    console.table(this.pattern)
   }
 
   checkDirty(): void {
     this.isPristine = false;
   }
 
+  resetPattern(): void {
+    this.pattern = {
+      id: -1,
+      patternName: '',
+      logMessage: new AlgorithmDefinitionItem,
+      dataSource: '',
+      imPmNumber: '',
+      defect: '',
+      errorDescription: '',
+      offlineLogReaderPattern: '',
+      notes: '',
+      resultsInError: '',
+      workaround: '',
+      components: '',
+      foundIn: '',
+      solvedIn: '',
+      sKB: ''
+    };
+  }
 }
