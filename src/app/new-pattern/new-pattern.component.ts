@@ -331,14 +331,15 @@ id: any;
 elementClicked($event :any)
 {
   let htmlElement = $event as HTMLElement
-
-  if (htmlElement.className.includes("list-item-clickable"))
-  {
-    if(this.currentlySelectedMessages.includes(htmlElement))
-      return;
     console.log(htmlElement)
-    this.currentlySelectedMessages.push(htmlElement)
-  }
+
+  // if (htmlElement.className.includes("list-item-clickable"))
+  // {
+  //   if(this.currentlySelectedMessages.includes(htmlElement))
+  //     return;
+  //   console.log(htmlElement)
+  //   this.currentlySelectedMessages.push(htmlElement)
+  // }
 
 
 }

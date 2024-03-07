@@ -105,9 +105,10 @@
           <!--This bellow is body for recursion ng-contianer-->
           <ng-template #Recursion let-algorithmItems="pattern_algorithmItems">
 
-            <ul *ngFor="let algorithmItem of algorithmItems" (click)="elementClicked($event.target)" class="list-item list-item-clickable">
+            <ul *ngFor="let algorithmItem of algorithmItems" (click)="elementClicked($event.target); $event.stopPropagation();"  class="list-item list-item-clickable">
 
               <div *ngIf=" algorithmItem.type.toLowerCase().includes('event')" class="list-item-wrapper">
+                <ul class="list-item-type list-item-clickable">{{algorithmItem.value}}</ul>
                 <li *ngFor="let c of pairDefinitionWithAlgorithm(algorithmItem,pattern.logMessage.definition)?.conditions" class="list-item-event list-item list-item-clickable">
                     <p> <span class="bold-primary-color-text">Source:</span>  {{c.source}} </p>
                     <p> <span class="bold-secondary-color-text">Pattern:</span>  {{c.pattern}}</p>
