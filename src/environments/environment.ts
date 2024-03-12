@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   hubUrl: "https://localhost:44374/updatehub",
-  baseUrl: "https://localhost:44375",
+  //baseUrl: "https://localhost:44375",
+  baseUrl: "https://skksc-xp-web.ad005.onehc.net/ErrorPatternDatabase.API",
   clientRoot: "http://localhost:4200/",
 };
 

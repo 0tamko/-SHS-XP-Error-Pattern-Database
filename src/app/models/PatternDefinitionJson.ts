@@ -1,7 +1,7 @@
 import { Conditions } from "./conditions";
 
 export class PatternDefinitionJson{
-    id: string;
+    id: number;
     patternName: string;
     metadata: MetadataItem = new MetadataItem();
     definition: DefinitionItem[] = [];

@@ -9,7 +9,7 @@ import { Event } from '../models/event';
 import { DialogEditPatternComponent } from '../dialog-edit-pattern/dialog-edit-pattern.component';
 import { Conditions } from '../models/conditions';
 import { JsonHandling } from '../services/json-handling.service';
-import { AlgorithmItem, DefinitionItem } from '../models/PatternDefinitionJson';
+import { AlgorithmItem, DefinitionItem, PatternDefinitionJson } from '../models/PatternDefinitionJson';
 
 @Component({
   selector: 'app-new-pattern',
@@ -18,13 +18,14 @@ import { AlgorithmItem, DefinitionItem } from '../models/PatternDefinitionJson';
 })
 export class NewPatternComponent implements OnInit {
 
-  pattern: Pattern;
+  newPattern: PatternDefinitionJson;
+
   editingExistedPattern: boolean = false;
   isPristine: boolean = true;
   hasError: boolean = false;
   messageTextAreaValue: string = '';
 
-  currentlySelectedMessages: HTMLElement[] =[];
+  currentlySelectedElement: HTMLElement[] =[];
   isMultiSelectActive: boolean =false;
 id: any;
 
@@ -47,7 +48,7 @@ id: any;
       this.editingExistedPattern = true;
       this.activatedRoute.data.subscribe((data: any) => {
 
-        this.pattern = data.pattern as Pattern;
+        this.newPattern = data.pattern as PatternDefinitionJson;
       });
     }
     else {
@@ -328,19 +329,43 @@ id: any;
   }
 */
 
-elementClicked($event :any)
+elementClicked($event : EventTarget | null)
 {
-  let htmlElement = $event as HTMLElement
+  const htmlElement : HTMLElement = $event as HTMLElement
 
-  if (htmlElement.className.includes("list-item-clickable"))
+  //Deselect if the first one was clicked again
+  if(htmlElement.className.includes(" list-item-selected"))
   {
-    if(this.currentlySelectedMessages.includes(htmlElement))
-      return;
-    console.log(htmlElement)
-    this.currentlySelectedMessages.push(htmlElement)
+    const indexOfElement: number = this.currentlySelectedElement.findIndex(element => element === htmlElement)
+    const className : string = this.currentlySelectedElement[indexOfElement].className;
+    this.currentlySelectedElement[indexOfElement].className = className.replace("list-item-selected","")
+
+    this.currentlySelectedElement.splice(indexOfElement,1)
+    return;
   }
+    
+  //If any conditions above doesn't match, it  add  element to list
+  htmlElement.className += " list-item-selected"
+  this.currentlySelectedElement.push(htmlElement)
 
+}
 
+cut()
+{
+  
+}
+
+patternMap(input : string ): string{
+  if(input.includes("*"))
+  {
+    if(input.startsWith("*") && input.endsWith("*"))
+      return "Contains"
+    if(input.startsWith("*"))
+      return "Starts with"
+    if(input.endsWith("*"))
+      return "End with"
+  }
+  return "Equals"
 }
 
 pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem[]
@@ -359,7 +384,7 @@ pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem
 
   addTestData(): void {
 
-    let def : DefinitionItem[] =  [
+    let definitionItem : DefinitionItem[] =  [
       {
       id : "waterValue",
       conditions :
@@ -372,14 +397,15 @@ pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem
       conditions :
       [
           { source : "EMH.ID", "pattern" : "UIS_02005_EXP_RELEASE_SVC*"},
-          { source : "EMH.Message", "pattern" : "*VK = 1, HK = 1*"} 
+          { source : "EMH.Message", "pattern" : "*VK = 1, HK = 1*"},
+          { source : "VK", pattern : "*1"} 
       ]
   },        
   {
       id : "imageStoreFailed",
       conditions :
       [
-          { "source" : "EMH.*", "pattern" : "*image not stored"}                
+          { "source" : "EMH.", "pattern" : "*image not stored"}                
       ]
   }
 ]
@@ -405,11 +431,6 @@ pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem
                       value : "expRelease",
                       members : []
                   },
-                  {
-                    type : "event",
-                    value : "expRelease",
-                    members : []
-                }
               ]
           },               
           {
@@ -420,29 +441,27 @@ pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem
       ]
   }]
 
-
-    this.pattern = {
+    this.newPattern = {
       id: -1,
-      patternName: 'NetworkDeviceConfigurationException',
-      logMessage: {
-        algorithm: algorithmItem,
-        definition : def
+      patternName: "NetworkDeviceConfigurationException",
+      metadata: {
+        dataSource: "syngo.txt",
+        imPmNumber: "PM00255093",
+        defect: "Defect 219032_ Rejected images are automatically selected in distribution workflow step",
+        errorDescription: "Rejceted images are automatically marked for sending",
+        offlineLogReaderPattern: "n/a",
+        notes: "Query/Retrieve of PACS is not configured correctly in UIS",
+        resultsInError: "yes",
+        workaround: 'yes',
+        components: 'Syngo',
+        foundIn: 'VA10C',
+        solvedIn: 'VA10CD',
+        sKB: 'SKB0118078'
       },
-      dataSource: "syngo.txt",
-      imPmNumber: 'PM00255093',
-      defect: 'Defect 219032_ Rejected images are automatically selected in distribution workflow step',
-      errorDescription: 'Rejceted images are automatically marked for sending',
-      offlineLogReaderPattern: 'n/a',
-      notes: "Query/Retrieve of PACS is not configured correctly in UIS",
-      resultsInError: 'yes',
-      workaround: 'yes',
-      components: 'Syngo',
-      foundIn: 'VA10C',
-      solvedIn: 'VA10CD',
-      sKB: 'SKB0118078'
-    };
-
-    console.table(this.pattern)
+      definition: definitionItem,
+      algorithm: algorithmItem,
+    }
+    console.table(this.newPattern)
   }
 
   checkDirty(): void {
@@ -450,22 +469,6 @@ pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem
   }
 
   resetPattern(): void {
-    this.pattern = {
-      id: -1,
-      patternName: '',
-      logMessage: new AlgorithmDefinitionItem,
-      dataSource: '',
-      imPmNumber: '',
-      defect: '',
-      errorDescription: '',
-      offlineLogReaderPattern: '',
-      notes: '',
-      resultsInError: '',
-      workaround: '',
-      components: '',
-      foundIn: '',
-      solvedIn: '',
-      sKB: ''
-    };
+    this.newPattern = new PatternDefinitionJson
   }
 }

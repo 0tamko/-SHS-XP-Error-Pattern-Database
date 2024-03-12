@@ -3,13 +3,13 @@
     <!-- Top Panel -->
 
     <img class="shslogo" src="./assets/shslogo.jpg" routerLink="/table">
-    <h1 *ngIf="editingExistedPattern" class="id">Id: {{pattern.id}}</h1>
+    <h1 *ngIf="editingExistedPattern" class="id">Id: {{newPattern.id}}</h1>
     <h1 *ngIf="!editingExistedPattern" class="id"> </h1>
     
     <form class="form">
       <mat-form-field class="patternName">
         <mat-label>Pattern Name</mat-label>
-        <textarea required class="patternNameTextArea" matInput [(ngModel)]="pattern.patternName" name="patternName" spellcheck="false" (change)="checkDirty()"></textarea>
+        <textarea required class="patternNameTextArea" matInput [(ngModel)]="newPattern.patternName" name="patternName" spellcheck="false" (change)="checkDirty()"></textarea>
         <mat-hint *ngIf="hasError" class="mat-error">
           Pattern name is <strong>required</strong>
         </mat-hint>
@@ -99,38 +99,39 @@
           </ng-template> -->
           
           <!-- First call of recursion-->
-          <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: pattern.logMessage.algorithm}" >
+          <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: newPattern.algorithm}" >
           </ng-container>
 
           <!--This bellow is body for recursion ng-contianer-->
           <ng-template #Recursion let-algorithmItems="pattern_algorithmItems">
 
-            <ul *ngFor="let algorithmItem of algorithmItems" (click)="elementClicked($event.target)" class="list-item list-item-clickable">
+            <ul *ngFor="let algorithmItem of algorithmItems" (click)="elementClicked($event.currentTarget);$event.stopPropagation();" class="list-item" id={{algorithmItem.id}}>
 
               <div *ngIf=" algorithmItem.type.toLowerCase().includes('event')" class="list-item-wrapper">
-                <li *ngFor="let c of pairDefinitionWithAlgorithm(algorithmItem,pattern.logMessage.definition)?.conditions" class="list-item-event list-item list-item-clickable">
+                <li *ngFor="let c of pairDefinitionWithAlgorithm(algorithmItem,newPattern.definition)?.conditions" (click)="elementClicked($event.currentTarget);$event.stopPropagation();" class="list-item-event">
                     <p> <span class="bold-primary-color-text">Source:</span>  {{c.source}} </p>
-                    <p> <span class="bold-secondary-color-text">Pattern:</span>  {{c.pattern}}</p>
+                    <p>{{patternMap(c.pattern)}}</p>
+                    <p> <span class="bold-secondary-color-text">Pattern:</span>  {{c.pattern.split("*").join("")}}</p>
                 </li>
               </div>
 
-              <div *ngIf="algorithmItem.type.toLowerCase().includes('within') || algorithmItem.type.toLowerCase().includes('or') " class="list-item-type list-item-clickable">
-                <p>{{algorithmItem.type}}</p>
+              <div *ngIf="algorithmItem.type.toLowerCase().includes('within') || algorithmItem.type.toLowerCase().includes('or') " class="list-item-type">
+                <p class="list-item-type-paragraph">{{algorithmItem.type}}</p>
               </div>   
                         
+
 
               <!--This ng-container bellow call themselves. Count of calls depends on count of members -->
               <li *ngIf="algorithmItem.members.length > 0">
                 <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: algorithmItem.members}">
                 </ng-container>
               </li>
-
             </ul>
           </ng-template>
       </table>
 
       </div>
-      <div *ngFor="let item of currentlySelectedMessages">
+      <div *ngFor="let item of currentlySelectedElement">
         {{item.innerText}}
       </div>
       <!--<div class="messageListControl">
@@ -156,22 +157,22 @@
         <mat-label>
           Offline Log Reader Pattern
         </mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.offlineLogReaderPattern" name="offlineLogReader" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.offlineLogReaderPattern" name="offlineLogReader" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>Data Source</mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.dataSource" name="dataSource" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.dataSource" name="dataSource" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>Im. Pm. Number</mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.imPmNumber" name="imPmNumber" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.imPmNumber" name="imPmNumber" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>Defect</mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.defect" name="defect" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.defect" name="defect" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
 
@@ -179,19 +180,19 @@
         <mat-label>
           Results In error
         </mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.resultsInError" name="resultsInError" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.resultsInError" name="resultsInError" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>Workaround</mat-label>
-        <textarea class="workaroundTextArea" matInput spellcheck="false" [(ngModel)]="pattern.workaround" name="workaround" (change)="checkDirty()"></textarea>
+        <textarea class="workaroundTextArea" matInput spellcheck="false" [(ngModel)]="newPattern.metadata.workaround" name="workaround" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>
           Components
         </mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.components" name="components" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.components" name="components" (change)="checkDirty()"></textarea>
       </mat-form-field>
     </form>
   </div>
@@ -202,31 +203,31 @@
         <mat-label>
           Found In
         </mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.foundIn" name="foundIn" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.foundIn" name="foundIn" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>
           Solved In
         </mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.solvedIn" name="solvedIn" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.solvedIn" name="solvedIn" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>
           SKB
         </mat-label>
-        <textarea matInput spellcheck="false" [(ngModel)]="pattern.sKB" name="sKB" (change)="checkDirty()"></textarea>
+        <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.sKB" name="sKB" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>Error description</mat-label>
-        <textarea matInput class="errorDescriptionTextArea" spellcheck="false" [(ngModel)]="pattern.errorDescription" name="errorDescription" (change)="checkDirty()"></textarea>
+        <textarea matInput class="errorDescriptionTextArea" spellcheck="false" [(ngModel)]="newPattern.metadata.errorDescription" name="errorDescription" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">
         <mat-label>Notes</mat-label>
-        <textarea class="notesTextArea" matInput spellcheck="false" [(ngModel)]="pattern.notes" name="notes" (change)="checkDirty()"></textarea>
+        <textarea class="notesTextArea" matInput spellcheck="false" [(ngModel)]="newPattern.metadata.notes" name="notes" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
     </form>
