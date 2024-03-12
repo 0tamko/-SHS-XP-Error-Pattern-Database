@@ -107,8 +107,16 @@
 
             <ul *ngFor="let algorithmItem of algorithmItems" (click)="elementClicked($event.currentTarget);$event.stopPropagation();" class="list-item" id={{algorithmItem.id}}>
 
+              <div *ngIf="algorithmItem.type.includes('terminateEvent')" class="list-item-event-terminate">
+                <p>Terminate</p>
+              </div>
+              
               <div *ngIf=" algorithmItem.type.toLowerCase().includes('event')" class="list-item-wrapper">
-                <li *ngFor="let c of pairDefinitionWithAlgorithm(algorithmItem,newPattern.definition)?.conditions" (click)="elementClicked($event.currentTarget);$event.stopPropagation();" class="list-item-event">
+                <div class="list-item-event-name">
+                  <p>Event name : {{algorithmItem.value}}</p>
+              </div>
+
+                <li *ngFor="let c of pairDefinitionWithAlgorithm(algorithmItem,newPattern.definition)?.conditions" class="list-item-event">
                     <p> <span class="bold-primary-color-text">Source:</span>  {{c.source}} </p>
                     <p>{{patternMap(c.pattern)}}</p>
                     <p> <span class="bold-secondary-color-text">Pattern:</span>  {{c.pattern.split("*").join("")}}</p>

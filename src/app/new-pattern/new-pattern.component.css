@@ -12,6 +12,7 @@ table{
   border: solid black 1px;
   margin: 3px;
   cursor: pointer;
+  border-radius: 0.30rem;
 }
 li{
   width: 100%;
@@ -55,6 +56,16 @@ li{
   width: 100%;
 }
 
+.list-item-event-name{
+  text-align: center;
+  border-bottom: 1px solid black;
+  background: white;
+}
+.list-item-event-name > p{
+  color: #eb6200;
+  font-weight: 500;
+  font-size: 1rem;
+}
 
 .list-item-event{
   width: auto;
@@ -67,7 +78,26 @@ li{
   border-bottom: none;
 }
 
-
+.list-item-event-terminate{
+  background: repeating-linear-gradient(
+  45deg,
+  #d62828,
+  #d62828 10px,
+  #ff3232 10px,
+  #ff3232 20px
+);
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.6) inset;
+}
+.list-item-event-terminate > p{
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  font-size: 1.25rem;
+  rotate: 90deg;
+  color: white;
+}
 
 td{
   text-align: left;
