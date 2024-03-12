@@ -9,7 +9,7 @@ export class Event{
 
     constructor(
         public id : number,
-        public conditions: Conditions[] | null, //prec
+        public conditions: Conditions[] | null,
         public terminate : boolean = false,
     ){}
 }
