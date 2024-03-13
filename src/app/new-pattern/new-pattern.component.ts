@@ -319,7 +319,7 @@ export class NewPatternComponent implements OnInit {
 
   }
 
-  getAlgorithmItem(algorithmItemId: number) {
+  getAlgorithmItem(algorithmItemId: number){
     let result;
     this.newPattern.algorithm.forEach(element => {
       let output = this.getAlgorithmItemRecursive(algorithmItemId, element);
@@ -443,7 +443,17 @@ export class NewPatternComponent implements OnInit {
         }
       });
     }
-    return result;
+    return result
+  }
+
+  terminateEvent()
+  {
+    const algorithmItem : AlgorithmItem  = this.getAlgorithmItem(parseInt(this.currentlySelectedElement[0].id)) as unknown as AlgorithmItem
+    
+    if(algorithmItem.type.includes("event"))
+      algorithmItem.type = "terminateEvent"
+    else
+      algorithmItem.type = "event"
   }
 
   addTestData(): void {

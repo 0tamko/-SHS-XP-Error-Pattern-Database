@@ -55,14 +55,17 @@ li {
 
 .list-item-type {
   margin: auto 1rem;
-  min-height: 200px;
+  min-height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.list-item-type-paragraph {
+.list-item-type > p {
+  margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  transform: rotate(-90deg);
-
+  rotate: 90deg;
 }
 
 
@@ -76,7 +79,9 @@ li {
   background: white;
 }
 
-.list-item-event-name>p {
+.list-item-event-name > p {
+  margin: 0;
+  padding: 0.5rem;
   color: #eb6200;
   font-weight: 500;
   font-size: 1rem;

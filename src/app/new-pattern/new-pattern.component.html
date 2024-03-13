@@ -171,6 +171,11 @@
         Down</button>
       <button mat-stroked-button *ngIf="this.cuttedAlgorithmItems.length === 1" (click)="CancelCut()">Cancel</button>
       <button mat-stroked-button *ngIf="this.currentlySelectedElement.length > 0" (click)="deselectAll()">Deselect All</button>
+      <button mat-stroked-button *ngIf="
+                this.currentlySelectedElement[0]?.lastElementChild?.lastElementChild?.classList?.contains('list-item-event')
+                && this.currentlySelectedElement.length === 1 "
+                (click)="terminateEvent()"> Terminate
+      </button>
 
       <p>Selected</p>
       <div *ngFor="let item of currentlySelectedElement">
