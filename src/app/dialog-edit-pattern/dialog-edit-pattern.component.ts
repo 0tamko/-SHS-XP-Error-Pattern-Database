@@ -1,9 +1,9 @@
 import { Component, OnInit,Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Event } from '../models/event';
 import { Conditions} from '../models/conditions';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS} from '@angular/material/tooltip';
 import { patternToolTipOptions } from '../app.component';
+import { DefinitionItem } from '../models/PatternDefinitionJson';
 
 
 @Component({
@@ -20,17 +20,19 @@ export class DialogEditPatternComponent implements OnInit {
   //recordForEdit : Record = new Record(this.data.record.id,
   //  this.data.record.type,this.data.record.conditions,this.data.record.operator,this.data.record.members)
 
-  eventForEdit: Event ;
+  eventForEdit: DefinitionItem ;
 
   selectableOptions: posibleOptions[] = [];
-  options= [ "Equals","Contains","Start with","End with"];
-  
+  options= [ "Equals","Contains","Start with","End with"];  
 
   constructor(public dialogRef:MatDialogRef<DialogEditPatternComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Event) { }
+    @Inject(MAT_DIALOG_DATA) public data: DefinitionItem) {
+
+      this.eventForEdit = data;
+     }
 
   ngOnInit(): void {
-      this.eventForEdit= new Event(this.data.id,Conditions.clone(this.data.conditions),this.data.terminate)
+    this.eventForEdit = this.data;
       this.generatePosibleOptions()
   }
   removeOperationOnSelectChange(condition : string){

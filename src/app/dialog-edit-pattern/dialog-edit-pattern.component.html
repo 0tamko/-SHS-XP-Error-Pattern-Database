@@ -1,9 +1,9 @@
 <div class="editWindow">
-    <mat-label class="edit-window-header">Event's condtion: </mat-label>
+    <input spellcheck="false"  matInput class="edit-window-header"  placeholder="Event name" autocorrect="off" [(ngModel)]="eventForEdit.name" >
+
 
     <div class="condtions-wrapper">
         <div class="event-functions">
-            <mat-checkbox class="check-box" [(ngModel)]="eventForEdit.terminate" matTooltip="Negate event">Not operation</mat-checkbox>
             <button mat-icon-button (click)="addContions()" matTooltip="Add condtion"><mat-icon>add_card</mat-icon></button>
         </div>
         
@@ -26,9 +26,9 @@
             </mat-form-field>
             <button mat-icon-button class="primary-color" color="warn" (click)="removeCondtion(item)"><mat-icon>delete</mat-icon></button>
         </div>
-        <p style="margin: 0; padding: 0; color: red; font-weight: 500;">
+        <!-- <p style="margin: 0; padding: 0; color: red; font-weight: 500;">
             Those stars will be fixed later
-        </p>
+        </p> -->
     </div>
     <div mat-dialog-actions>
         <button mat-stroked-button  mat-dialog-close>Exit</button>
