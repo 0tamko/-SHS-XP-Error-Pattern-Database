@@ -10,6 +10,7 @@ import { DialogEditPatternComponent } from '../dialog-edit-pattern/dialog-edit-p
 import { Conditions } from '../models/conditions';
 import { JsonHandling } from '../services/json-handling.service';
 import { AlgorithmItem, DefinitionItem, PatternDefinitionJson } from '../models/PatternDefinitionJson';
+import { HtmlParser } from '@angular/compiler';
 
 @Component({
   selector: 'app-new-pattern',
@@ -25,25 +26,28 @@ export class NewPatternComponent implements OnInit {
   hasError: boolean = false;
   messageTextAreaValue: string = '';
 
-  currentlySelectedElement: HTMLElement[] =[];
-  isMultiSelectActive: boolean =false;
-id: any;
+  currentlySelectedElement: HTMLElement[] = [];
+  isMultiSelectActive: boolean = false;
+
+  cuttedAlgorithmItems: HTMLElement[] = [];
+
+  id: any;
 
 
-  @HostListener('window:keydown.control', ['$event']) 
+  @HostListener('window:keydown.control', ['$event'])
   ShiftKeyDown() {
-    this.isMultiSelectActive = true; 
+    this.isMultiSelectActive = true;
   }
-  @HostListener('window:keyup.control', ['$event']) 
-  ShiftKeyUp(){
-    this.isMultiSelectActive = false; 
+  @HostListener('window:keyup.control', ['$event'])
+  ShiftKeyUp() {
+    this.isMultiSelectActive = false;
   }
 
 
   constructor(private router: Router, private patternApi: PatternsApiService, private activatedRoute: ActivatedRoute
-    ,private dialog: MatDialog, private cdref: ChangeDetectorRef,private jsonHandling : JsonHandling) { }
+    , private dialog: MatDialog, private cdref: ChangeDetectorRef, private jsonHandling: JsonHandling) { }
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
     if (this.activatedRoute.snapshot.paramMap.keys.length !== 0) {
       this.editingExistedPattern = true;
       this.activatedRoute.data.subscribe((data: any) => {
@@ -61,385 +65,459 @@ id: any;
     this.cdref.detectChanges();
     this.cdref.detach();
   }
-/*
-  exportJson(){
-    this.jsonHandling.exportPatternToJsonDownload(this.pattern)
-  }
-  importJson(fileInput: HTMLInputElement){
-    let ParsedJson: Object;
-    fileInput.click()
-    fileInput.addEventListener('change', (e) => {
-      fileInput.files![0].text()
-      .then(importedJson => ParsedJson = this.jsonHandling.importPatternFromJson(importedJson))
-      .finally(() => {
-        try{
-          this.pattern = ParsedJson as Pattern
-        }
-        catch{
-          console.log("nedobre")
-        }
-      })
-      .catch(e => console.log(e))
-    })
-  }*/
-  /*
-  nextId():number{
-    if(this.pattern.logMessage.length ==0)
-      return 0;
-    return Math.max(...this.pattern.logMessage.map(x => x.id))+1
-  }
 
-  divClicked($event: any): void {
-    let element = event?.currentTarget as HTMLElement
-    if(this.isMultiSelectActive)    
-      this.handleMultiElementClick(element)
-    else{
-      this.handleSingleElementClick(element)
-    }
-  }
+  editDialogPattern(): void {
 
-  handleSingleElementClick(element: HTMLElement):void{
-    if(element.classList.contains("clickable-row")){
+    let definitionItem;
 
-      if(this.currentlySelectedMessages[0] == element && this.currentlySelectedMessages.length == 1){
-        this.currentlySelectedMessages[0].className = "clickable-row"
-        this.currentlySelectedMessages.pop()
+    this.newPattern.algorithm.forEach(element => {
+      let output = this.getDefinitionIdFromAlgorithmItemId(element, Number(this.currentlySelectedElement[0].id))
+      if (output) {
+        definitionItem = output;
       }
-      else{
-        if(this.currentlySelectedMessages.length > 0){
-          this.currentlySelectedMessages.every(x => x.className = "clickable-row")
-          this.currentlySelectedMessages = []
-        }
-        this.currentlySelectedMessages.push(element);
-        this.currentlySelectedMessages[0].className = "selected clickable-row"
-      }
-    }
-  }
-
-  handleMultiElementClick(element:HTMLElement): boolean| void{
-    if(this.currentlySelectedMessages.includes(element)){
-      return;
-    }
-
-    this.currentlySelectedMessages.push(element);
-    this.currentlySelectedMessages[this.currentlySelectedMessages.length -1].className = "selected clickable-row"
-  }
-
-  isChangePositionPossible(indexChange: number): boolean { 
-    if (this.currentlySelectedMessages.length == 0 )
-      return true;
-    
-    const isNotPossibleToChangePosition = this.currentlySelectedMessages.some(currentlySelectedItem =>{
-      if(this.pattern.logMessage.length <= (currentlySelectedItem.tabIndex +indexChange)|| 
-      (currentlySelectedItem.tabIndex + indexChange) < 0)
-        return true
-      else
-        return false
-    })
-
-    return isNotPossibleToChangePosition
-  }
-
-  //Don't fix it if it ain't broke, then rewrite to more human code
-  changePosition(targetIndex: number): void {
-
-    if(targetIndex ===1 && this.currentlySelectedMessages.length > 1)
-      this.currentlySelectedMessages.sort((a,b)=> {
-        if(a.tabIndex > b.tabIndex)
-          return -1;
-        if(a.tabIndex < b.tabIndex)
-          return 1;
-
-        return 0;
-        }
-      )
-    if(targetIndex ===-1 && this.currentlySelectedMessages.length > 1)
-      this.currentlySelectedMessages.sort((a,b)=> {
-        if(a.tabIndex < b.tabIndex)
-          return -1;
-        if(a.tabIndex > b.tabIndex)
-          return 1;
-
-        return 0;
-        }
-      )
-
-    this.currentlySelectedMessages.forEach(currentlySelectedMessage => {
-    
-      let currentIndex = currentlySelectedMessage.tabIndex;
-      let temp = this.pattern.logMessage[currentIndex + targetIndex]
-
-
-      this.pattern.logMessage[currentIndex + targetIndex] = this.pattern.logMessage[currentIndex]
-      this.pattern.logMessage[currentIndex] = temp;
-    })
-    this.isPristine = false;
-  }
-
-  addMessage():void  {
-    const dialogRef = this.dialog.open(DialogEditPatternComponent,{
-      data: new Event(this.nextId(),EventType.message,[new Conditions("","")],null,[])
     });
 
-    dialogRef.afterClosed().subscribe(newRecord => {
-      if(newRecord instanceof Event){
-        this.pattern.logMessage.push(newRecord)
-        this.isPristine = false;
-      }
+    const dialogRef = this.dialog.open(DialogEditPatternComponent,
+      {
+        data: definitionItem
+      });
+
+    dialogRef.afterClosed().subscribe(editedRecord => {
+   
+    })
+  }
+  addMessage(): void {
+
+    let uniqueId =this.getUniqueId();
+
+    const dialogRef = this.dialog.open(DialogEditPatternComponent, {
+      data: new DefinitionItem(uniqueId!)
+    });
+
+    dialogRef.afterClosed().subscribe(newRecord => {      
+      let newDefinitionItem = newRecord as DefinitionItem;
+      let newAlgorithmItem = new AlgorithmItem(this.getUniqueId());
+
+      newAlgorithmItem.type = "event";
+      newAlgorithmItem.value = newDefinitionItem.id.toString();
+
+      this.newPattern.definition.push(newDefinitionItem);
+      this.newPattern.algorithm.push(newAlgorithmItem);
     })
   }
 
-  removeMessage():void  {
-    this.currentlySelectedMessages.forEach(currentlySelectedMessageId => 
-      { 
-      let foundedIndex = this.pattern.logMessage.findIndex(
-        recordId => recordId.id == Number(currentlySelectedMessageId.id)
-        )
-        
-      this.pattern.logMessage.splice(Number(foundedIndex),1)
-      }
-    )
-    this.currentlySelectedMessages = []
+  getUniqueId(){
+    let uniqueId = 0;
 
-    this.isPristine = false; 
-  }
-  
-  addLogicalOperator(type: string): void {
+    this.newPattern.algorithm.forEach(element=>
+      {
+        uniqueId = this.getUniqueIdRecursive(element,uniqueId);
+      });
 
-    let newRecord:Event = new Event(this.nextId(),EventType.relationShip,null,new Relation(type),[])
-    let statrIndex: number = Math.min(...this.currentlySelectedMessages.map(elementIndex=> elementIndex.tabIndex))
-  
-    let objectsToTransports: Event[] = this.currentlySelectedMessages.map(elementIndex => this.pattern.logMessage[elementIndex.tabIndex])
-    newRecord.members?.push(...objectsToTransports)
-    this.pattern.logMessage.splice(statrIndex,this.currentlySelectedMessages.length,newRecord)
-  
-    this.currentlySelectedMessages =[]
-
-    this.isPristine = false;
+      return uniqueId;
   }
 
-  negateEvent():void{
-    const index = this.currentlySelectedMessages[0].tabIndex;
-    this.pattern.logMessage[index].notState= !this.pattern.logMessage[index].notState 
-  }
+  getUniqueIdRecursive(algorithmItem: AlgorithmItem, currentId: number): number {
 
-  splitRelationShip(id: number):void {
-    let objectsToSplit = this.pattern.logMessage.filter(item => item.id === id).map(x => x.members)
-    this.pattern.logMessage.splice(this.pattern.logMessage.findIndex(x=> x.id ==id),1,...objectsToSplit.flat().map(x=>x as Event))
-    this.isPristine = false;
-  }
-
-  editDialogPattern(event: Event): void{
-      const dialogRef = this.dialog.open(DialogEditPatternComponent,
-        {
-          data: event
-        });
-  
-      dialogRef.afterClosed().subscribe(editedRecord => {
-        if(editedRecord instanceof Event){
-          event = Object.assign(event,editedRecord);
-
-          this.isPristine = false;
-        }
-      })
-  }
-  
-  }
-
-  onClose(): void {
-    if (this.isPristine) {
-      this.router.navigateByUrl('/table');
+    if (algorithmItem.id >= currentId ) {
+      currentId = algorithmItem.id + 1;
     }
-    else {
-      this.openDialog()
+
+    if (algorithmItem.type.toLocaleLowerCase().includes("event") && Number(algorithmItem.value) >= currentId) {
+      currentId = Number(algorithmItem.value) + 1;
     }
+
+    algorithmItem.members.forEach(element => {
+      currentId = this.getUniqueIdRecursive(element, currentId);
+    });
+
+    return currentId+1;
   }
 
-  onSave(): void {
-    if (this.pattern.patternName === '') {
-      this.hasError = true;
+  elementClicked($event: EventTarget | null) {
+    const htmlElement: HTMLElement = $event as HTMLElement
+
+    if (this.cuttedAlgorithmItems.length === 1 && this.currentlySelectedElement.length === 1 && !htmlElement.className.includes("selected") ||
+      htmlElement.className.includes("cutted")) {
+      return;
+    }
+    if (this.cuttedAlgorithmItems.length === 1 &&
+      (htmlElement.innerText.toLowerCase().startsWith("event") || htmlElement.innerText.toLowerCase().startsWith("terminate"))) {
+      return;
+    }
+    if (this.cuttedAlgorithmItems.length === 1 && (this.isParentElement(Number(this.cuttedAlgorithmItems[0].id), Number(htmlElement.id)))) {
       return;
     }
 
-    if (this.editingExistedPattern) {
-      this.patternApi.updatePattern(this.pattern.id, this.pattern).subscribe(
-      () => 
-      {
-        this.router.navigateByUrl('/table');
+    //Deselect if the first one was clicked again
+    if (htmlElement.className.includes(" list-item-selected")) {
+      const indexOfElement: number = this.currentlySelectedElement.findIndex(element => element.id === htmlElement.id)
+      const className: string = this.currentlySelectedElement[indexOfElement].className;
+      this.currentlySelectedElement[indexOfElement].className = className.replace("list-item-selected", "")
+      this.currentlySelectedElement.splice(indexOfElement, 1);
+      return;
+    }
 
-      },
-      error =>
-      {
-        console.log(error);
-      });
+    //If any conditions above doesn't match, it  add  element to list
+    htmlElement.className += " list-item-selected"
+
+    this.currentlySelectedElement.push(htmlElement)
+
+  }
+
+  deselectAll() {
+    this.currentlySelectedElement.forEach(element => {
+      const className: string = element.className;
+      element.className = className.replace("list-item-selected", "")
+    })
+
+    this.currentlySelectedElement = [];
+  }
+
+  pasteToRoot() {
+    let itemToBePastedId = Number(this.cuttedAlgorithmItems[0].id);
+    let itemToBePasted = this.getAlgorithmItem(itemToBePastedId);
+    this.deleteItem(itemToBePastedId);
+    this.newPattern.algorithm.push(itemToBePasted!);
+    this.cuttedAlgorithmItems = [];
+  }
+
+  OnDeleteClick() {
+    this.currentlySelectedElement.forEach(element => {
+      this.deleteItem(Number(element.id))
+    })
+
+    this.currentlySelectedElement = [];
+
+  }
+
+  addOr()
+  {
+    let newOrItem = new AlgorithmItem(this.getUniqueId())
+    newOrItem.type = "or";
+
+    this.newPattern.algorithm.push(newOrItem);
+  }
+
+  deleteItem(algorithmItemId: number) {
+    let index = this.newPattern.algorithm.findIndex(x => x.id === algorithmItemId)
+    if (index !== -1) {
+      this.newPattern.algorithm.push(...this.newPattern.algorithm[index].members)
+      this.newPattern.algorithm.splice(index, 1);
     }
     else {
-      this.patternApi.addPattern(this.pattern).subscribe(
-        () => 
-        {
-        this.router.navigateByUrl('/table');
-
-      },
-      error =>
-      {
-        console.log(error);
-      });
+      this.newPattern.algorithm.forEach(item => {
+        this.removeAlgorithmItem(algorithmItemId, item);
+      })
     }
   }
 
+  cutMessage() {
+    this.cuttedAlgorithmItems.push(this.currentlySelectedElement[0])
+    this.currentlySelectedElement = [];
+    const className: string = this.cuttedAlgorithmItems[0].className;
+    this.cuttedAlgorithmItems[0].className = className.replace("list-item-selected", "list-item-cutted");
+
+    // let selectedAlgorithmId = Number(this.currentlySelectedElement[0].id);
 
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(DialogRemovePatternComponent, { data: { text: 'Would you like to save your changes?', yes: 'yes', no: 'no' } });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 'yes') {
-        if (this.pattern.patternName === '') {
-          this.hasError = true;
-          return;
-        }
-        if (this.editingExistedPattern) {
-          this.patternApi.updatePattern(this.pattern.id, this.pattern).subscribe(() => {
-            this.router.navigateByUrl('/table');
-          });
-        }
-        else {
-          this.patternApi.addPattern(this.pattern).subscribe(() => {
-            this.router.navigateByUrl('/table');
-          });
-        }
+
+    // let algorithmItem = this.newPattern.algorithm.find(x=>x.id === selectedAlgorithmId);
+
+    // if (algorithmItem)
+    // {
+    //   this.cuttedAlgorithmItems.push(algorithmItem);
+    // }
+    // else{
+    //   this.newPattern.algorithm.forEach(element=>
+    //     {
+    //       let output = this.getAlgorithmItem(selectedAlgorithmId,element);
+    //       if(output)
+    //       {
+    //         this.cuttedAlgorithmItems.push(output);
+    //       }
+    //     })
+    // }
+
+  }
+
+  paste() {
+    let itemCutted;
+    let itemToPaste;
+    let cuttedAlgorithmId = Number(this.cuttedAlgorithmItems[0].id);
+    let itemToPasteId = Number(this.currentlySelectedElement[0].id);
+
+    itemCutted = this.getAlgorithmItem(cuttedAlgorithmId);
+
+    if (!itemCutted) { return; }
+
+    itemToPaste = this.getAlgorithmItem(itemToPasteId);
+
+    this.deleteItem(cuttedAlgorithmId)
+    this.cuttedAlgorithmItems = [];
+    this.addItemToAlgorithmItem(itemCutted, itemToPasteId);
+    this.deselectAll();
+  }
+
+  isParentElement(childId: Number, parentId: Number): boolean {
+    let output = false;
+    this.newPattern.algorithm.forEach(element => {
+      if (element.id === parentId && element.members.find(x => x.id === childId)) {
+        output = true;
       }
       else {
-        this.router.navigateByUrl('/table');
+        element.members.forEach(innerElement => {
+          output = this.isParentElementRecursive(childId, parentId, innerElement) == true ? true : output;
+        })
       }
-    });
+    })
+    return output;
+  }
+  isParentElementRecursive(childId: Number, parentId: Number, algorithmItem: AlgorithmItem): boolean {
+    let output = false;
+
+    if (algorithmItem.id === parentId && algorithmItem.members.find(x => x.id === childId)) {
+      return true;
+    }
+    else {
+      algorithmItem.members.forEach(element => {
+        output = this.isParentElementRecursive(childId, parentId, element) == true ? true : output;
+      })
+    }
+    return output;
   }
 
-  patternMap(input : string ): string{
-    if(input.includes("*"))
-    {
-      if(input.startsWith("*") && input.endsWith("*"))
+  addItemToAlgorithmItem(itemToBeAdded: AlgorithmItem, itemIdToPaste: number) {
+    this.newPattern.algorithm.forEach(element => {
+      if (element.id === itemIdToPaste) {
+        element.members.push(itemToBeAdded);
+      }
+      else {
+        this.addItemToAlgorithmItemRecursive(itemToBeAdded, itemIdToPaste, element);
+      }
+    })
+  }
+
+  addItemToAlgorithmItemRecursive(itemToBeAdded: AlgorithmItem, itemIdToPaste: number, algorithmItem: AlgorithmItem) {
+    if (algorithmItem.id === itemIdToPaste) {
+      algorithmItem.members.push(itemToBeAdded);
+    }
+    else {
+      algorithmItem.members.forEach(element => {
+        this.addItemToAlgorithmItemRecursive(itemToBeAdded, itemIdToPaste, element);
+      })
+    }
+  }
+
+
+  CancelCut() {
+    const className: string = this.cuttedAlgorithmItems[0].className;
+    this.cuttedAlgorithmItems[0].className = className.replace("list-item-cutted", "list-item-selected");
+    this.currentlySelectedElement.push(this.cuttedAlgorithmItems[0]);
+    this.cuttedAlgorithmItems = [];
+
+  }
+
+  getAlgorithmItem(algorithmItemId: number) {
+    let result;
+    this.newPattern.algorithm.forEach(element => {
+      let output = this.getAlgorithmItemRecursive(algorithmItemId, element);
+      if (output) {
+        result = output;
+      }
+    })
+
+    return result;
+  }
+
+  getAlgorithmItemRecursive(algorithmItemId: Number, algorithmItem: AlgorithmItem) {
+    let result;
+
+    if (algorithmItem.id === algorithmItemId) {
+      result = algorithmItem;
+    }
+    else {
+      algorithmItem.members.forEach(element => {
+        let output = this.getAlgorithmItemRecursive(algorithmItemId, element);
+        if (output) {
+          result = output;
+        }
+      });
+    }
+
+    return result;
+  }
+
+  moveBy(changeIndexBy: number) {
+
+    let index = this.newPattern.algorithm.findIndex(x => x.id == Number(this.currentlySelectedElement[0].id));
+
+    if (index !== -1) {
+      let newPossition = changeIndexBy + index;
+      let maxIndex = this.newPattern.algorithm.length - 1;
+      if ((index != 0 && newPossition >= 0) || //<- if move up is possible
+        (index != maxIndex && newPossition <= maxIndex)) // <- if move down is possible
+      {
+        let from = this.newPattern.algorithm.splice(index, 1)[0];
+        this.newPattern.algorithm.splice(newPossition, 0, from);
+      }
+    }
+    else {
+      this.newPattern.algorithm.forEach(element => {
+        this.moveAlgorithmItemBy(element, changeIndexBy);
+      });
+    }
+
+
+  }
+
+  moveAlgorithmItemBy(algorithmItem: AlgorithmItem, changeIndexBy: number) {
+    let index = algorithmItem.members.findIndex(x => x.id == Number(this.currentlySelectedElement[0].id));
+
+    if (index !== -1) {
+      let newPossition = changeIndexBy + index;
+      let maxIndex = algorithmItem.members.length - 1;
+      if ((index != 0 && newPossition >= 0) || //<- if move up is possible
+        (index != maxIndex && newPossition <= maxIndex)) // <- if move down is possible
+      {
+        let from = algorithmItem.members.splice(index, 1)[0];
+        algorithmItem.members.splice(newPossition, 0, from);
+      }
+    }
+    else {
+      algorithmItem.members.forEach(element => {
+        this.moveAlgorithmItemBy(element, changeIndexBy);
+      });
+    }
+  }
+
+
+  removeAlgorithmItem(id: number, algorithmItem: AlgorithmItem): void {
+    let index = algorithmItem.members.findIndex(x => x.id === id);
+
+    if (index !== -1) {
+      algorithmItem.members.push(...algorithmItem.members[index].members);
+      algorithmItem.members.splice(index, 1);
+    }
+    else {
+      algorithmItem.members.forEach(element => {
+        this.removeAlgorithmItem(id, element);
+      });
+    }
+  }
+
+  patternMap(input: string): string {
+    if (input.includes("*")) {
+      if (input.startsWith("*") && input.endsWith("*"))
         return "Contains"
-      if(input.startsWith("*"))
+      if (input.startsWith("*"))
         return "Starts with"
-      if(input.endsWith("*"))
+      if (input.endsWith("*"))
         return "End with"
     }
     return "Equals"
   }
-*/
 
-elementClicked($event : EventTarget | null)
-{
-  const htmlElement : HTMLElement = $event as HTMLElement
-
-  //Deselect if the first one was clicked again
-  if(htmlElement.className.includes(" list-item-selected"))
-  {
-    const indexOfElement: number = this.currentlySelectedElement.findIndex(element => element === htmlElement)
-    const className : string = this.currentlySelectedElement[indexOfElement].className;
-    this.currentlySelectedElement[indexOfElement].className = className.replace("list-item-selected","")
-
-    this.currentlySelectedElement.splice(indexOfElement,1)
+  pairDefinitionWithAlgorithm(algorithm: AlgorithmItem, definition: DefinitionItem[]
+  ) {
+    if (algorithm.type.includes("event") || algorithm.type.includes("Event")) {
+      let eventToReturn = definition.find(x => x.id.toString() === algorithm.value)
+      return eventToReturn
+    }
     return;
   }
-    
-  //If any conditions above doesn't match, it  add  element to list
-  htmlElement.className += " list-item-selected"
-  this.currentlySelectedElement.push(htmlElement)
 
-}
+  getDefinitionIdFromAlgorithmItemId(algorithmItem: AlgorithmItem, algorithmItemId: number) {
+    let result;
 
-cut()
-{
-  
-}
+    if (algorithmItem.id === algorithmItemId) {
+      result = this.newPattern.definition.find(x => x.id === Number(algorithmItem.value));
+    }
 
-patternMap(input : string ): string{
-  if(input.includes("*"))
-  {
-    if(input.startsWith("*") && input.endsWith("*"))
-      return "Contains"
-    if(input.startsWith("*"))
-      return "Starts with"
-    if(input.endsWith("*"))
-      return "End with"
+    else {
+      algorithmItem.members.forEach(element => {
+        let output = this.getDefinitionIdFromAlgorithmItemId(element, algorithmItemId);
+        if (output) {
+          result = output;
+        }
+      });
+    }
+    return result;
   }
-  return "Equals"
-}
-
-pairDefinitionWithAlgorithm(algorithm: AlgorithmItem,definition : DefinitionItem[]
-){
-  if (algorithm.type.includes("event") || algorithm.type.includes("Event")) {
-    let eventToReturn = new Event(
-      Number.parseInt(algorithm.value),
-      definition.find(x => x.id == algorithm.value)?.conditions ?? null,
-      algorithm.type.includes("terminate") ? true : false,
-    )
-  return eventToReturn
-  }
-  return;
-}
-
 
   addTestData(): void {
 
-    let definitionItem : DefinitionItem[] =  [
+    let definitionItem: DefinitionItem[] = [
       {
-      id : "waterValue",
-      conditions :
-      [
-          { "source" : "EMH.Message", "pattern" : "Water Value Received"}
-      ]
-  },
-  {
-      id : "expRelease",
-      conditions :
-      [
-          { source : "EMH.ID", "pattern" : "UIS_02005_EXP_RELEASE_SVC*"},
-          { source : "EMH.Message", "pattern" : "*VK = 1, HK = 1*"},
-          { source : "VK", pattern : "*1"} 
-      ]
-  },        
-  {
-      id : "imageStoreFailed",
-      conditions :
-      [
-          { "source" : "EMH.", "pattern" : "*image not stored"}                
-      ]
-  }
-]
+        id: 7,
+        name: "waterValue",
+        conditions:
+          [
+            { "source": "EMH.Message", "pattern": "Water Value Received" }
+          ]
+      },
+      {
+        id: 8,
+        name: "expRelease",
+        conditions:
+          [
+            { source: "EMH.ID", "pattern": "UIS_02005_EXP_RELEASE_SVC*" },
+            { source: "EMH.Message", "pattern": "*VK = 1, HK = 1*" },
+            { source: "VK", pattern: "*1" }
+          ]
+      },
+      {
+        id: 9,
+        name: "imageStoreFailed",
+        conditions:
+          [
+            { "source": "EMH.", "pattern": "*image not stored" }
+          ]
+      }
+    ]
 
-    let algorithmItem : AlgorithmItem[] = [
+    let algorithmItem: AlgorithmItem[] = [
       {
-      type : "within",
-      value : "10000",
-      members : 
-      [
-          {
-              type : "or",
-              value : "",
-              members : 
-              [
+        id: 1,
+        type: "within",
+        value: "10000",
+        members:
+          [
+            {
+              id: 2,
+              type: "or",
+              value: "",
+              members:
+                [
                   {
-                      type : "event",
-                      value : "waterValue",
-                      members : []
+                    id: 3,
+                    type: "event",
+                    value: "7",
+                    members: []
                   },
                   {
-                      type : "event",
-                      value : "expRelease",
-                      members : []
+                    id: 4,
+                    type: "event",
+                    value: "8",
+                    members: []
                   },
-              ]
-          },               
-          {
-              type : "terminateEvent",
-              value : "imageStoreFailed",
-              members : []
-          } 
-      ]
-  }]
+                ]
+            },
+            {
+              id: 5,
+              type: "terminateEvent",
+              value: "9",
+              members: []
+            }
+          ]
+      },
+      {
+        id: 6,
+        type: "terminateEvent",
+        value: "9",
+        members: []
+      }]
 
     this.newPattern = {
       id: -1,

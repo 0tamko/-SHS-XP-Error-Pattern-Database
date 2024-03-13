@@ -1,6 +1,6 @@
 import { Conditions } from "./conditions";
 
-export class PatternDefinitionJson{
+export class PatternDefinitionJson {
     id: number;
     patternName: string;
     metadata: MetadataItem = new MetadataItem();
@@ -10,14 +10,26 @@ export class PatternDefinitionJson{
 }
 
 export class AlgorithmItem {
+
+    constructor(id: number) {
+        this.id = id;
+    }
+
+    id: number;
     type: string;
     value: string;
-    members: AlgorithmItem[];
+    members: AlgorithmItem[] =[];
 }
 
 export class DefinitionItem {
-    id: string;
-    conditions: Conditions[];
+
+    constructor(id: number) {
+        this.id = id;
+    }
+
+    id: number;
+    name: string;
+    conditions: Conditions[] = [];
 }
 
 export class MetadataItem {
