@@ -18,11 +18,11 @@
     </form>
     <div class="buttons">
       <input type="file" #fileInput style="display: none;" accept=".json">
-      <!-- <button inputmode="file" mat-stroked-button (click)="importJson(fileInput)" >Import</button>
-      <button mat-stroked-button (click)="exportJson()">Export</button>-->
+      <button inputmode="file" mat-stroked-button (click)="importJson(fileInput)" >Import</button>
+      <button mat-stroked-button (click)="exportJson()">Export</button>
       <button style="width:100px" (click)="addTestData()">Fill test data</button>
-      <!--<button mat-stroked-button (click)="onClose()">Close</button>
-      <button mat-stroked-button (click)="onSave()">Save</button>-->
+      <button mat-stroked-button (click)="close()">Close</button>
+      <button mat-stroked-button (click)="save()">Save</button>
 
     </div>
   </div>
@@ -138,7 +138,7 @@
 
 
               <!--This ng-container bellow call themselves. Count of calls depends on count of members -->
-              <li *ngIf="algorithmItem.members.length > 0">
+              <li *ngIf="algorithmItem.members!.length > 0">
                 <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: algorithmItem.members}">
                 </ng-container>
               </li>
@@ -153,6 +153,7 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="addMessage()">Event</button>
         <button mat-menu-item (click)="addOr()">Or</button>
+        <button mat-menu-item (click)="addWithin()">Within</button>
       </mat-menu>
       <button mat-stroked-button
         *ngIf="this.cuttedAlgorithmItems.length === 0 && this.currentlySelectedElement.length === 1"
@@ -177,14 +178,15 @@
                 (click)="terminateEvent()"> Terminate
       </button>
 
-      <p>Selected</p>
+
+      <!-- <p>Selected</p>
       <div *ngFor="let item of currentlySelectedElement">
         {{item.id}}
       </div>
       <p>Cutted</p>
       <div *ngFor="let item of cuttedAlgorithmItems">
         {{item.id}}
-      </div>
+      </div> -->
       <!--<div class="messageListControl">
         <button mat-stroked-button (click)="addMessage()">Add</button>
         <button [disabled]="currentlySelectedMessages.length == 0" mat-stroked-button (click)="removeMessage()">Remove</button>
@@ -209,7 +211,7 @@
           Offline Log Reader Pattern
         </mat-label>
         <textarea matInput spellcheck="false" [(ngModel)]="newPattern.metadata.offlineLogReaderPattern"
-          name="offlineLogReader" (change)="checkDirty()"></textarea>
+          name="offlineLogReaderPattern" (change)="checkDirty()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="formTextArea">

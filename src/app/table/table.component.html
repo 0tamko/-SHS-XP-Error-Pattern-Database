@@ -3,9 +3,9 @@
     <img class="shslogo" src="./assets/shslogo.jpg" />
     <mat-form-field class="filterForm">
       <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="" value=""  [disabled]="!isLoggedIn"/>
+      <input matInput (keyup)="applyFilter($event)" placeholder="" value=""  />
     </mat-form-field>
-    <button mat-stroked-button (click)="addData()" [disabled]="!isLoggedIn">Add Pattern </button>
+    <button mat-stroked-button (click)="addData()" >Add Pattern </button>
     <button *ngIf="selection.selected.length>0" mat-stroked-button download="file.json" (click)="downloadSelected()" [disabled]="!isLoggedIn">Download Select</button>
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)" [disabled]="!isLoggedIn"></mat-paginator> 
 
@@ -40,71 +40,64 @@
         <td mat-cell *matCellDef="let element" [innerHTML]="element.patternName | highlightSearch: filterText"></td>
       </ng-container>
 
-      <ng-container matColumnDef="logMessage">
-        <th mat-header-cell *matHeaderCellDef>Log Message</th>
-        <td mat-cell *matCellDef="let element">
-          <p *ngFor="let message of element.logMessage" [innerHTML]="message | highlightSearch: filterText"><br /></p>
-        </td>
-      </ng-container>
-
       <ng-container matColumnDef="dataSource">
         <th mat-header-cell *matHeaderCellDef>Data Source</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.dataSource | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.dataSource | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="imPmNumber">
         <th mat-header-cell *matHeaderCellDef>Im. Pm. Number</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.imPmNumber | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.imPmNumber| highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="defect">
         <th mat-header-cell *matHeaderCellDef>Defect</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.defect | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.defect | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="errorDescription">
         <th mat-header-cell *matHeaderCellDef>Error Description</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.errorDescription | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.errorDescription | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="offlineLogReaderPattern">
         <th mat-header-cell *matHeaderCellDef>Offline Log Reader Pattern</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.offlineLogReaderPattern | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.offlineLogReaderPattern | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="notes">
         <th mat-header-cell *matHeaderCellDef>Notes</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.notes | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.notes | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="resultsInError">
         <th mat-header-cell *matHeaderCellDef>Results in error</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.resultsInError | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.resultsInError | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="workaround">
         <th mat-header-cell *matHeaderCellDef>Workaround</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.workaround | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.workaround | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="components">
         <th mat-header-cell *matHeaderCellDef>Components</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.components | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.components | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="foundIn">
         <th mat-header-cell *matHeaderCellDef>Found in</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.foundIn | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.foundIn | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="solvedIn">
         <th mat-header-cell *matHeaderCellDef>Solved in</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.solvedIn | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.solvedIn | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="skb">
         <th mat-header-cell *matHeaderCellDef>SKB</th>
-        <td mat-cell *matCellDef="let element" [innerHTML]="element.skb | highlightSearch: filterText"></td>
+        <td mat-cell *matCellDef="let element" [innerHTML]="element.metadata.skb | highlightSearch: filterText"></td>
       </ng-container>
 
       <ng-container matColumnDef="functions" stickyEnd>

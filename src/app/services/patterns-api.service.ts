@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pattern } from '../models/pattern';
 import { environment } from '../../environments/environment';
@@ -19,16 +19,20 @@ export class PatternsApiService {
   }
 
 
-  public getPatterns(): Observable<Pattern[] | undefined> {
-    return this.http.get<Pattern[]>(environment.baseUrl + "/api/patterns/");
+  public getPatterns(): Observable<PatternDefinitionJson[] | undefined> {
+    return this.http.get<PatternDefinitionJson[]>(environment.baseUrl + "/api/patterns/");
   }
 
-  public updatePattern(id: number, pattern: Pattern) {
+  public updatePattern(id: number, pattern: PatternDefinitionJson) {
     return this.http.put<any>(environment.baseUrl + "/api/patterns/" + id, pattern);
   }
 
-  public addPattern(pattern: Pattern) {
-    return this.http.post<any>(environment.baseUrl + "/api/patterns/", pattern);
+  public addPattern(pattern: PatternDefinitionJson) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })}
+    return this.http.post<any>(environment.baseUrl + "/api/patterns/", pattern, httpOptions);
   }
 
   public deletePattern(id: number) {

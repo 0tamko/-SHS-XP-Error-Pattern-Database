@@ -11,7 +11,7 @@ import { Conditions } from '../models/conditions';
 import { JsonHandling } from '../services/json-handling.service';
 import { AlgorithmItem, DefinitionItem, PatternDefinitionJson } from '../models/PatternDefinitionJson';
 import { HtmlParser } from '@angular/compiler';
-
+import exportFromJSON from 'export-from-json';
 @Component({
   selector: 'app-new-pattern',
   templateUrl: './new-pattern.component.html',
@@ -43,7 +43,6 @@ export class NewPatternComponent implements OnInit {
     this.isMultiSelectActive = false;
   }
 
-
   constructor(private router: Router, private patternApi: PatternsApiService, private activatedRoute: ActivatedRoute
     , private dialog: MatDialog, private cdref: ChangeDetectorRef, private jsonHandling: JsonHandling) { }
 
@@ -66,6 +65,84 @@ export class NewPatternComponent implements OnInit {
     this.cdref.detach();
   }
 
+  exportJson() {
+    let data = this.newPattern;
+    let fileName = this.newPattern.patternName;
+    const exportType = "json";
+    exportFromJSON({ data, fileName, exportType });
+  }
+  importJson(fileInput: HTMLInputElement) {
+    let ParsedJson: Object;
+    fileInput.click()
+    fileInput.addEventListener('change', (e) => {
+      fileInput.files![0].text()
+        .then(importedJson => ParsedJson = importedJson)
+        .finally(() => {
+          try {
+            this.newPattern = JSON.parse(ParsedJson.toString());
+            console.log(this.newPattern);
+          }
+          catch {
+            console.log("nedobre")
+          }
+        })
+        .catch(e => console.log(e))
+    })
+  }
+
+  close() {
+    if (this.isPristine) {
+      this.router.navigateByUrl('/table');
+    }
+    else {
+      this.openDialog()
+    }
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogRemovePatternComponent, { data: { text: 'Would you like to save your changes?', yes: 'yes', no: 'no' } });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        if (this.newPattern.patternName === '') {
+          this.hasError = true;
+          return;
+        }
+        if (this.editingExistedPattern) {
+          this.patternApi.updatePattern(this.newPattern.id, this.newPattern).subscribe(() => {
+            this.router.navigateByUrl('/table');
+          });
+        }
+        else {
+          this.patternApi.addPattern(this.newPattern).subscribe(() => {
+            this.router.navigateByUrl('/table');
+          });
+        }
+      }
+      else {
+        this.router.navigateByUrl('/table');
+      }
+    });
+  }
+
+  save() {
+    if (this.newPattern.patternName === '') {
+      this.hasError = true;
+      return;
+    }
+
+    if (this.editingExistedPattern) {
+      this.patternApi.updatePattern(this.newPattern.id, this.newPattern).subscribe(() => {
+        this.router.navigateByUrl('/table');
+      });
+    }
+    else {
+      this.patternApi.addPattern(this.newPattern).subscribe(() => {
+        this.router.navigateByUrl('/table');
+      });
+    }
+  }
+
   editDialogPattern(): void {
 
     let definitionItem;
@@ -83,18 +160,18 @@ export class NewPatternComponent implements OnInit {
       });
 
     dialogRef.afterClosed().subscribe(editedRecord => {
-   
+
     })
   }
   addMessage(): void {
 
-    let uniqueId =this.getUniqueId();
+    let uniqueId = this.getUniqueId();
 
     const dialogRef = this.dialog.open(DialogEditPatternComponent, {
       data: new DefinitionItem(uniqueId!)
     });
 
-    dialogRef.afterClosed().subscribe(newRecord => {      
+    dialogRef.afterClosed().subscribe(newRecord => {
       let newDefinitionItem = newRecord as DefinitionItem;
       let newAlgorithmItem = new AlgorithmItem(this.getUniqueId());
 
@@ -106,20 +183,19 @@ export class NewPatternComponent implements OnInit {
     })
   }
 
-  getUniqueId(){
+  getUniqueId() {
     let uniqueId = 0;
 
-    this.newPattern.algorithm.forEach(element=>
-      {
-        uniqueId = this.getUniqueIdRecursive(element,uniqueId);
-      });
+    this.newPattern.algorithm.forEach(element => {
+      uniqueId = this.getUniqueIdRecursive(element, uniqueId);
+    });
 
-      return uniqueId;
+    return uniqueId;
   }
 
   getUniqueIdRecursive(algorithmItem: AlgorithmItem, currentId: number): number {
 
-    if (algorithmItem.id >= currentId ) {
+    if (algorithmItem.id >= currentId) {
       currentId = algorithmItem.id + 1;
     }
 
@@ -131,7 +207,7 @@ export class NewPatternComponent implements OnInit {
       currentId = this.getUniqueIdRecursive(element, currentId);
     });
 
-    return currentId+1;
+    return currentId + 1;
   }
 
   elementClicked($event: EventTarget | null) {
@@ -191,12 +267,19 @@ export class NewPatternComponent implements OnInit {
 
   }
 
-  addOr()
-  {
+  addOr() {
     let newOrItem = new AlgorithmItem(this.getUniqueId())
     newOrItem.type = "or";
 
     this.newPattern.algorithm.push(newOrItem);
+  }
+
+  addWithin(){
+    let newWithinType = new AlgorithmItem(this.getUniqueId())
+    newWithinType.type = "Within";
+    newWithinType.value = "10000";
+
+    this.newPattern.algorithm.push(newWithinType);
   }
 
   deleteItem(algorithmItemId: number) {
@@ -319,7 +402,7 @@ export class NewPatternComponent implements OnInit {
 
   }
 
-  getAlgorithmItem(algorithmItemId: number){
+  getAlgorithmItem(algorithmItemId: number) {
     let result;
     this.newPattern.algorithm.forEach(element => {
       let output = this.getAlgorithmItemRecursive(algorithmItemId, element);
@@ -446,11 +529,10 @@ export class NewPatternComponent implements OnInit {
     return result
   }
 
-  terminateEvent()
-  {
-    const algorithmItem : AlgorithmItem  = this.getAlgorithmItem(parseInt(this.currentlySelectedElement[0].id)) as unknown as AlgorithmItem
-    
-    if(algorithmItem.type.includes("event"))
+  terminateEvent() {
+    const algorithmItem: AlgorithmItem = this.getAlgorithmItem(parseInt(this.currentlySelectedElement[0].id)) as unknown as AlgorithmItem
+
+    if (algorithmItem.type.includes("event"))
       algorithmItem.type = "terminateEvent"
     else
       algorithmItem.type = "event"
