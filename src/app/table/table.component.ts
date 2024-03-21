@@ -10,6 +10,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SignalrService } from '../services/signalr.service';
 import { JsonHandling } from '../services/json-handling.service';
+import { PatternDefinitionJson } from '../models/PatternDefinitionJson';
 
 @Component({
   selector: 'app-table',
@@ -19,15 +20,15 @@ import { JsonHandling } from '../services/json-handling.service';
 export class TableComponent implements OnInit {
 
   displayedColumns: string[] = [];
-  dataSource: MatTableDataSource<Pattern> = new MatTableDataSource<Pattern>([]);
-  selection = new SelectionModel<Pattern>(true, []);
+  dataSource: MatTableDataSource<PatternDefinitionJson> = new MatTableDataSource<PatternDefinitionJson>([]);
+  selection = new SelectionModel<PatternDefinitionJson>(true, []);
   filterText = '';
   pageSize: number;
   fileURL: string | null;
 
   isLoggedIn = true;
 
-  @ViewChild(MatTable) table: MatTable<Pattern>;
+  @ViewChild(MatTable) table: MatTable<PatternDefinitionJson>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
@@ -37,25 +38,24 @@ export class TableComponent implements OnInit {
     private signalRService: SignalrService,
     private jsonHandling:JsonHandling) {
 
-    this.displayedColumns.length = 17;
+    this.displayedColumns.length = 16;
     // The first two columns should be position and name; the last two columns: weight, symbol
     this.displayedColumns[0] = 'select';
     this.displayedColumns[1] = 'id';
     this.displayedColumns[2] = 'patternName';
-    this.displayedColumns[3] = 'logMessage';
-    this.displayedColumns[4] = 'dataSource';
-    this.displayedColumns[5] = 'imPmNumber';
-    this.displayedColumns[6] = 'defect';
-    this.displayedColumns[7] = 'errorDescription';
-    this.displayedColumns[8] = 'offlineLogReaderPattern';
-    this.displayedColumns[9] = 'notes';
-    this.displayedColumns[10] = 'resultsInError';
-    this.displayedColumns[11] = 'workaround';
-    this.displayedColumns[12] = 'components';
-    this.displayedColumns[13] = 'foundIn';
-    this.displayedColumns[14] = 'solvedIn';
-    this.displayedColumns[15] = 'skb';
-    this.displayedColumns[16] = 'functions';
+    this.displayedColumns[3] = 'dataSource';
+    this.displayedColumns[4] = 'imPmNumber';
+    this.displayedColumns[5] = 'defect';
+    this.displayedColumns[6] = 'errorDescription';
+    this.displayedColumns[7] = 'offlineLogReaderPattern';
+    this.displayedColumns[8] = 'notes';
+    this.displayedColumns[9] = 'resultsInError';
+    this.displayedColumns[10] = 'workaround';
+    this.displayedColumns[11] = 'components';
+    this.displayedColumns[12] = 'foundIn';
+    this.displayedColumns[13] = 'solvedIn';
+    this.displayedColumns[14] = 'skb';
+    this.displayedColumns[15] = 'functions';
   }
   ngOnInit(): void {
     
@@ -77,9 +77,9 @@ export class TableComponent implements OnInit {
 
   getPatterns(): void {
     this.patternsApiService.getPatterns()
-      .subscribe((data: Pattern[] | undefined) => {
+      .subscribe((data: PatternDefinitionJson[] | undefined) => {
         if (data) {
-          this.dataSource = new MatTableDataSource<Pattern>(data);
+          this.dataSource = new MatTableDataSource<PatternDefinitionJson>(data);
           this.paginator.pageSize = this.pageSize;
           this.dataSource.paginator = this.paginator;
         }
@@ -133,7 +133,7 @@ export class TableComponent implements OnInit {
   }
 
   /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: Pattern): string {
+  checkboxLabel(row?: PatternDefinitionJson): string {
     if (!row) {
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
