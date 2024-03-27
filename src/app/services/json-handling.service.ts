@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { Pattern } from "../models/pattern";
 import { Event } from "../models/event";
 import { Conditions } from "../models/conditions";
 import exportFromJSON from "export-from-json";

@@ -3,9 +3,10 @@
     <img class="shslogo" src="./assets/shslogo.jpg" />
     <mat-form-field class="filterForm">
       <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="" value=""  />
+      <input matInput (keyup)="applyFilter($event)" placeholder="" [(ngModel)]="this.filterText"/>
     </mat-form-field>
     <button mat-stroked-button (click)="addData()" >Add Pattern </button>
+    <button (click)="log(this.filterText)">Debug</button>
     <button *ngIf="selection.selected.length>0" mat-stroked-button download="file.json" (click)="downloadSelected()" [disabled]="!isLoggedIn">Download Select</button>
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)" [disabled]="!isLoggedIn"></mat-paginator> 
 

@@ -1,0 +1,24 @@
+.type-edit-wrapper{
+    padding: 1rem;
+}
+
+.button-wrapper{
+    display: flex;
+    float: right;
+}
+.button-wrapper > button {
+    margin: 0 .25rem;
+}
+
+.input-wrapper{
+    margin: 0.5rem 0;
+}
+
+.input-wrapper > .form-field{
+    margin: 0 0.5rem;
+}
+
+.primary-button{
+    color: white;
+    background-color: #eb6200;
+}

@@ -23,11 +23,11 @@ export class AlgorithmItem {
 
 export class DefinitionItem {
 
-    constructor(id: number) {
+    constructor(id: string) {
         this.id = id;
     }
 
-    id: number;
+    id: string;
     name: string;
     conditions: Conditions[] = [];
 }

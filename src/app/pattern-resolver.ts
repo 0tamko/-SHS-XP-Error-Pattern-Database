@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
-import { Pattern } from "./models/pattern";
 import { PatternsApiService } from "./services/patterns-api.service";
 
 @Injectable({ providedIn: 'root' })

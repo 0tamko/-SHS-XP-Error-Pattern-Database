@@ -26,7 +26,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { DialogEditPatternComponent } from './dialog-edit-pattern/dialog-edit-pattern.component';
 import {MatTabsModule} from '@angular/material/tabs'; 
 import {MatTooltipModule} from '@angular/material/tooltip'; 
-import {MatSelectModule} from '@angular/material/select'; 
+import {MatSelectModule} from '@angular/material/select';
+import { DialogEditTypeComponent } from './dialog-edit-type/dialog-edit-type.component'; 
 
 
 const routes: Routes = [
@@ -43,7 +44,8 @@ const routes: Routes = [
     NewPatternComponent,
     TableComponent,
     DialogRemovePatternComponent,
-    DialogEditPatternComponent
+    DialogEditPatternComponent,
+    DialogEditTypeComponent
   ],
   imports: [
     MatIconModule,

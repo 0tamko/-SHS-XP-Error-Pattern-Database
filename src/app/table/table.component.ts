@@ -2,7 +2,6 @@ import { Component, Input, OnInit, SecurityContext, ViewChild, ViewEncapsulation
 import { Router } from '@angular/router';
 import { PatternsApiService } from '../services/patterns-api.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { Pattern } from '../models/pattern';
 import { MatTable } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePatternComponent } from '../dialog-remove-pattern/dialog-remove-pattern.component';
@@ -74,21 +73,25 @@ export class TableComponent implements OnInit {
       this.getPatterns();
     });
   }
+  log(input: any){
+    console.log(input)
+  }
 
   getPatterns(): void {
     this.patternsApiService.getPatterns()
       .subscribe((data: PatternDefinitionJson[] | undefined) => {
         if (data) {
+          console.log()
           this.dataSource = new MatTableDataSource<PatternDefinitionJson>(data);
           this.paginator.pageSize = this.pageSize;
           this.dataSource.paginator = this.paginator;
+          console.log(this.dataSource.data[0].metadata)
         }
       });
   }
 
-  applyFilter(filterValue: Event): void {
-    this.filterText = (filterValue.target as HTMLInputElement).value.trim();
-    this.dataSource.filter = this.filterText.toLowerCase();
+  applyFilter(event: Event): void {
+    this.dataSource.filter = this.filterText.toLowerCase().trim()
   }
 
   addData(): void {

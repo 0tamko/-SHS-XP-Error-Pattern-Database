@@ -31,74 +31,7 @@
     <form class="form">
       <div #messageList class="messagesList">
         <table>
-          <!--
-        <tr class="clickable-row" (click)="divClicked($event.target)"  *ngFor="let item of pattern.logMessage let i = index" tabindex="{{i}}" id="{{item.id}}">
-          <ng-container *ngIf="item.type == typeMessage; else elseBlock">
-            <td colspan="2">
-            <p class="event-postion bold-primary-color-text">Event {{i+1}}</p>
-              <div class="event-wrapper">
-                <div class="condtions-wrapper">
-                  <div class="not-operation" *ngIf="item.notState">
-                    <p class="not-operation-context">NOT</p>
-                  </div>
-                  <div class="condition" *ngFor="let item of item.conditions">
-                    <p>{{item.source}}</p>
-                    <p class="bold-primary-color-text">{{patternMap(item.pattern)}}</p>
-                    <p>{{item.pattern.split("*").join("")}}</p>
-                  </div>
-                </div>
-              </div>
-            </td>
-
-            <td>
-              <div class="menu-wrapper">
-                <button mat-icon-button [matMenuTriggerFor]="menu">
-                  <mat-icon>more_vert</mat-icon>
-                </button></div>
-                <mat-menu #menu="matMenu" xPosition="before">
-                  <button mat-menu-item (click)="editDialogPattern(item)">
-                    <mat-icon>edit</mat-icon>
-                    <span>Edit</span>
-                  </button>
-                </mat-menu>
-            </td>
-          </ng-container>
           
-          <ng-template #elseBlock>
-            <td class="operator-style">
-              <p class="operator">
-                {{item.operator?.name}}
-              </p>
-              <input *ngIf="item.operator?.name == 'WITHIN'" type="text" maxlength="4" name="within" [(ngModel)]="item.operator!.value"> 
-              <span *ngIf="item.operator?.name == 'WITHIN'" class="operator">Second's</span>
-            </td>
-            <td class="relationship">
-              <div *ngFor="let member of item.members" class="members-messages">
-
-                <div class="not-operation" *ngIf="member.notState">
-                  <p class="not-operation-context">NOT</p>
-                </div>
-                <div class="condition" *ngFor="let item of member.conditions">
-                  <p>{{item.source}}</p>
-                    <p class="bold-primary-color-text">{{patternMap(item.pattern)}}</p>
-                    <p>{{item.pattern.replace("*","")}}</p>
-                </div>
-
-                <div class="members-messages-functions">
-                  <button mat-icon-button (click)="editDialogPattern(member)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </td>
-
-            <td>
-              <button mat-icon-button (click)="splitRelationShip(item.id)">
-                <mat-icon>content_cut</mat-icon>
-              </button>
-            </td>
-          </ng-template> -->
-
           <!-- First call of recursion-->
           <ng-container *ngTemplateOutlet="Recursion; context:{pattern_algorithmItems: newPattern.algorithm}">
           </ng-container>
@@ -131,7 +64,7 @@
               <div
                 *ngIf="algorithmItem.type.toLowerCase().includes('within') || algorithmItem.type.toLowerCase().includes('or') "
                 class="list-item-type">
-                <p *ngIf="algorithmItem.type.toLowerCase().includes('within')" id="{{algorithmItem.Id}}" class="list-item-type-paragraph">{{algorithmItem.type.toUpperCase() +"  "+ algorithmItem.value + " ms"}}</p>
+                <p *ngIf="algorithmItem.type.toLowerCase().includes('within')" id="{{algorithmItem.Id}}" class="list-item-type-paragraph">{{algorithmItem.type.toUpperCase()}}<span class="bold-secondary-color-text"> {{algorithmItem.value}}</span> ms</p>
                 <p *ngIf="algorithmItem.type.toLowerCase().includes('or')" class="list-item-type-paragraph"> {{algorithmItem.type.toUpperCase()}}</p>
               </div>
 
@@ -153,7 +86,7 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="addMessage()">Event</button>
         <button mat-menu-item (click)="addOr()">Or</button>
-        <button mat-menu-item (click)="addWithin()">Within</button>
+        <button mat-menu-item (click)="addWithinOrEdit(null)">Within</button>
       </mat-menu>
       <button mat-stroked-button
         *ngIf="this.cuttedAlgorithmItems.length === 0 && this.currentlySelectedElement.length === 1"
@@ -178,29 +111,6 @@
                 (click)="terminateEvent()"> Terminate
       </button>
 
-
-      <!-- <p>Selected</p>
-      <div *ngFor="let item of currentlySelectedElement">
-        {{item.id}}
-      </div>
-      <p>Cutted</p>
-      <div *ngFor="let item of cuttedAlgorithmItems">
-        {{item.id}}
-      </div> -->
-      <!--<div class="messageListControl">
-        <button mat-stroked-button (click)="addMessage()">Add</button>
-        <button [disabled]="currentlySelectedMessages.length == 0" mat-stroked-button (click)="removeMessage()">Remove</button>
-        <button [disabled]="isChangePositionPossible(-1)" mat-stroked-button (click)="changePosition(-1)">Up</button>
-        <button [disabled]="isChangePositionPossible(+1)" mat-stroked-button (click)="changePosition(+1)">Down</button>
-      </div>
-      <div class="logicalOpperatorsControl">
-        
-        <button [disabled]="currentlySelectedMessages.length != 2" class="operatorAnd" mat-stroked-button (click)="addLogicalOperator('AND')">AND</button>
-        <button [disabled]="currentlySelectedMessages.length != 2" class="operatorAnd" mat-stroked-button (click)="addLogicalOperator('OR')">OR</button>
-        <button [disabled]="currentlySelectedMessages.length != 2 " class="operatorOr" mat-stroked-button (click)="addLogicalOperator('WITHIN')">Within</button>
-        <button [disabled]="currentlySelectedMessages.length != 1 " class="operatorOr" mat-stroked-button (click)="negateEvent()">NOT</button>
-      </div>
-    -->
     </form>
   </div>
   <div class="centerPanel">

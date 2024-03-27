@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlgorithmDefinitionItem, Pattern } from '../models/pattern';
 import { ActivatedRoute } from '@angular/router';
 import { PatternsApiService } from '../services/patterns-api.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +11,7 @@ import { JsonHandling } from '../services/json-handling.service';
 import { AlgorithmItem, DefinitionItem, PatternDefinitionJson } from '../models/PatternDefinitionJson';
 import { HtmlParser } from '@angular/compiler';
 import exportFromJSON from 'export-from-json';
+import { DialogEditTypeComponent } from '../dialog-edit-type/dialog-edit-type.component';
 @Component({
   selector: 'app-new-pattern',
   templateUrl: './new-pattern.component.html',
@@ -145,30 +145,35 @@ export class NewPatternComponent implements OnInit {
 
   editDialogPattern(): void {
 
-    let definitionItem;
+    let algorithmItem : AlgorithmItem = this.getAlgorithmItem(Number(this.currentlySelectedElement[0].id))!
 
-    this.newPattern.algorithm.forEach(element => {
-      let output = this.getDefinitionIdFromAlgorithmItemId(element, Number(this.currentlySelectedElement[0].id))
-      if (output) {
-        definitionItem = output;
-      }
-    });
+    if(algorithmItem.type.toLocaleLowerCase() == "within")
+    {
+      this.addWithinOrEdit(algorithmItem)
+    }
+    else
+    {
+      const definitonItem = this.getDefinitionIdFromAlgorithmItemId(algorithmItem, Number(this.currentlySelectedElement[0].id))
 
-    const dialogRef = this.dialog.open(DialogEditPatternComponent,
-      {
-        data: definitionItem
-      });
-
-    dialogRef.afterClosed().subscribe(editedRecord => {
-
-    })
+      console.log(definitonItem)
+      const dialogRef = this.dialog.open(DialogEditPatternComponent,
+        {
+          data: definitonItem
+        });
+  
+      dialogRef.afterClosed().subscribe(editedRecord => {
+  
+      })
+    }
+  
   }
+
   addMessage(): void {
 
     let uniqueId = this.getUniqueId();
 
     const dialogRef = this.dialog.open(DialogEditPatternComponent, {
-      data: new DefinitionItem(uniqueId!)
+      data: new DefinitionItem(uniqueId!.toString())
     });
 
     dialogRef.afterClosed().subscribe(newRecord => {
@@ -515,7 +520,7 @@ export class NewPatternComponent implements OnInit {
     let result;
 
     if (algorithmItem.id === algorithmItemId) {
-      result = this.newPattern.definition.find(x => x.id === Number(algorithmItem.value));
+      result = this.newPattern.definition.find(x => x.id === algorithmItem.value);
     }
 
     else {
@@ -527,6 +532,28 @@ export class NewPatternComponent implements OnInit {
       });
     }
     return result
+  }
+
+  addWithinOrEdit(algorithmItem : AlgorithmItem | null ){
+
+    const dialogRef = this.dialog.open(DialogEditTypeComponent, {
+      data: algorithmItem ? algorithmItem  : new AlgorithmItem(-1)
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if(result == undefined)
+        return;        
+
+      if(result.id == -1){
+        result.id = this.getUniqueId()
+        this.newPattern.algorithm.push(result);
+        return;
+      }
+
+      Object.assign(algorithmItem!,result);
+      }
+    )
   }
 
   terminateEvent() {
@@ -542,7 +569,7 @@ export class NewPatternComponent implements OnInit {
 
     let definitionItem: DefinitionItem[] = [
       {
-        id: 7,
+        id: "7",
         name: "waterValue",
         conditions:
           [
@@ -550,7 +577,7 @@ export class NewPatternComponent implements OnInit {
           ]
       },
       {
-        id: 8,
+        id: "8",
         name: "expRelease",
         conditions:
           [
@@ -560,7 +587,7 @@ export class NewPatternComponent implements OnInit {
           ]
       },
       {
-        id: 9,
+        id: "9",
         name: "imageStoreFailed",
         conditions:
           [

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Pattern } from '../models/pattern';
 import { environment } from '../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { PatternDefinitionJson } from '../models/PatternDefinitionJson';
@@ -20,7 +19,7 @@ export class PatternsApiService {
 
 
   public getPatterns(): Observable<PatternDefinitionJson[] | undefined> {
-    return this.http.get<PatternDefinitionJson[]>(environment.baseUrl + "/api/patterns/");
+    return this.http.get<PatternDefinitionJson[]>(environment.baseUrl + "/api/patterns");
   }
 
   public updatePattern(id: number, pattern: PatternDefinitionJson) {
